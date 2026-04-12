@@ -93,30 +93,6 @@ Security:
 
 ---
 
-## 🧠 Architecture
-
-Flutter App (Monday)
-│
-├── services/
-│   ├── groq_service.dart
-│   ├── github_auth_service.dart
-│
-├── screens/
-│   ├── login_screen.dart
-│   ├── home_screen.dart
-│
-└── secure storage (tokens)
-        │
-        ▼
-Backend API
-├── POST /auth/token
-├── POST /auth/revoke
-        │
-        ▼
-GitHub API + OAuth
-
----
-
 ## 🔐 Security Rules
 
 - No client secrets in Flutter
