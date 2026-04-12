@@ -13,7 +13,7 @@ class AppConfig {
 
   /// Vercel backend base URL — update after deployment.
   /// Example: https://monday-backend.vercel.app
-  static const backendUrl = 'https://monday-backend.vercel.app';
+  static const backendUrl = 'https://backend-ten-orcin-76.vercel.app';
 
   /// GitHub OAuth scopes.
   static const scopes = ['repo', 'read:user'];

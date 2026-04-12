@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -89,6 +92,9 @@ class MondayApp extends StatelessWidget {
 }
 
 /// Gate flow: API key → GitHub login → Home.
+///
+/// Also listens for incoming deep links (`com.monday.app://callback?code=...`)
+/// to complete the OAuth code exchange automatically.
 class _RootGate extends StatefulWidget {
   const _RootGate({required this.storageService});
   final SecureStorageService storageService;
@@ -101,10 +107,20 @@ class _RootGateState extends State<_RootGate> {
   bool _loading = true;
   bool _hasApiKey = false;
 
+  late final AppLinks _appLinks;
+  StreamSubscription<Uri>? _linkSub;
+
   @override
   void initState() {
     super.initState();
     _checkKey();
+    _initDeepLinks();
+  }
+
+  @override
+  void dispose() {
+    _linkSub?.cancel();
+    super.dispose();
   }
 
   Future<void> _checkKey() async {
@@ -114,6 +130,31 @@ class _RootGateState extends State<_RootGate> {
         _loading = false;
         _hasApiKey = has;
       });
+    }
+  }
+
+  /// Set up deep-link handling for the OAuth callback.
+  void _initDeepLinks() {
+    _appLinks = AppLinks();
+
+    // Cold start — app was not running when the link arrived
+    _appLinks.getInitialLink().then((uri) {
+      if (uri != null) _handleDeepLink(uri);
+    });
+
+    // Warm start — app is already running in the background
+    _linkSub = _appLinks.uriLinkStream.listen(_handleDeepLink);
+  }
+
+  /// Extract the `code` query parameter and hand it to [GitHubAuthService].
+  void _handleDeepLink(Uri uri) {
+    // Only handle our OAuth callback scheme
+    if (uri.scheme != 'com.monday.app') return;
+
+    final code = uri.queryParameters['code'];
+    if (code != null && code.isNotEmpty) {
+      final auth = context.read<GitHubAuthService>();
+      auth.exchangeCode(code);
     }
   }
 
@@ -145,3 +186,4 @@ class _RootGateState extends State<_RootGate> {
     return const HomeScreen();
   }
 }
+
