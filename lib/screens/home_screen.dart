@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../services/groq_service.dart';
-import 'profile_screen.dart';
 import '../services/model_provider.dart';
 import '../widgets/model_selector_chip.dart';
 import '../widgets/usage_indicator.dart';
+import 'profile_screen.dart';
+import 'repo_list_screen.dart';
 
-/// Main screen — model selector, chat area, and usage bar.
+/// Main screen — bottom nav with Chat and Repos tabs.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -16,6 +17,130 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _tabIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0F0F1A),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // — Top bar (shared) ——————————————————————————
+            _buildTopBar(),
+
+            // — Tab content ——————————————————————————————
+            Expanded(
+              child: IndexedStack(
+                index: _tabIndex,
+                children: const [
+                  _ChatTab(),
+                  RepoListScreen(),
+                ],
+              ),
+            ),
+
+            // — Usage bar (shared) ————————————————————————
+            const UsageIndicator(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: _buildBottomNav(),
+    );
+  }
+
+  Widget _buildTopBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+      child: Row(
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF7C3AED), Color(0xFF2563EB)],
+              ),
+            ),
+            child: const Center(
+              child: Text('M',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16)),
+            ),
+          ),
+          const SizedBox(width: 10),
+          const Text(
+            'Monday',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.5,
+            ),
+          ),
+          const Spacer(),
+          IconButton(
+            icon: Icon(Icons.settings_outlined,
+                color: Colors.white.withValues(alpha: 0.4), size: 22),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const ProfileScreen()),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomNav() {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E1E2E),
+        border: Border(
+          top: BorderSide(color: Colors.white.withValues(alpha: 0.06)),
+        ),
+      ),
+      child: BottomNavigationBar(
+        currentIndex: _tabIndex,
+        onTap: (i) => setState(() => _tabIndex = i),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        selectedItemColor: const Color(0xFF7C3AED),
+        unselectedItemColor: Colors.white.withValues(alpha: 0.3),
+        selectedFontSize: 11,
+        unselectedFontSize: 11,
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble_rounded, size: 20),
+            activeIcon: Icon(Icons.chat_bubble_rounded, size: 22),
+            label: 'Chat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.folder_rounded, size: 20),
+            activeIcon: Icon(Icons.folder_rounded, size: 22),
+            label: 'Repos',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// Chat Tab — extracted from the old HomeScreen, unchanged
+// ═══════════════════════════════════════════════════════════
+
+class _ChatTab extends StatefulWidget {
+  const _ChatTab();
+
+  @override
+  State<_ChatTab> createState() => _ChatTabState();
+}
+
+class _ChatTabState extends State<_ChatTab> {
   final _inputController = TextEditingController();
   final _scrollController = ScrollController();
   final List<_ChatMessage> _messages = [];
@@ -73,85 +198,29 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final groq = context.watch<GroqService>();
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // — Top bar ——————————————————————————————————
-            _buildTopBar(),
-
-            // — Model chips ——————————————————————————————
-            const Padding(
-              padding: EdgeInsets.only(top: 8, bottom: 4),
-              child: ModelSelectorChip(),
-            ),
-
-            // — Chat area ————————————————————————————————
-            Expanded(
-              child: _messages.isEmpty
-                  ? _buildEmptyState()
-                  : ListView.builder(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                      itemCount: _messages.length,
-                      itemBuilder: (_, i) => _MessageBubble(msg: _messages[i]),
-                    ),
-            ),
-
-            // — Input ————————————————————————————————————
-            _buildInput(groq.isLoading),
-
-            // — Usage bar —————————————————————————————————
-            const UsageIndicator(),
-          ],
+    return Column(
+      children: [
+        // — Model chips ——————————————————————————————————
+        const Padding(
+          padding: EdgeInsets.only(top: 8, bottom: 4),
+          child: ModelSelectorChip(),
         ),
-      ),
-    );
-  }
 
-  Widget _buildTopBar() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-      child: Row(
-        children: [
-          Container(
-            width: 34,
-            height: 34,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              gradient: const LinearGradient(
-                colors: [Color(0xFF7C3AED), Color(0xFF2563EB)],
-              ),
-            ),
-            child: const Center(
-              child: Text('M',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 16)),
-            ),
-          ),
-          const SizedBox(width: 10),
-          const Text(
-            'Monday',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.5,
-            ),
-          ),
-          const Spacer(),
-          IconButton(
-            icon: Icon(Icons.settings_outlined,
-                color: Colors.white.withValues(alpha: 0.4), size: 22),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const ProfileScreen()),
-            ),
-          ),
-        ],
-      ),
+        // — Chat area ————————————————————————————————————
+        Expanded(
+          child: _messages.isEmpty
+              ? _buildEmptyState()
+              : ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                  itemCount: _messages.length,
+                  itemBuilder: (_, i) => _MessageBubble(msg: _messages[i]),
+                ),
+        ),
+
+        // — Input ————————————————————————————————————————
+        _buildInput(groq.isLoading),
+      ],
     );
   }
 

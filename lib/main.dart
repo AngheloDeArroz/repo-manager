@@ -12,6 +12,7 @@ import 'services/github_auth_service.dart';
 import 'services/groq_service.dart';
 import 'services/model_provider.dart';
 import 'services/rate_limiter.dart';
+import 'services/repo_provider.dart';
 import 'services/secure_storage_service.dart';
 
 void main() async {
@@ -21,6 +22,7 @@ void main() async {
   final rateLimiter = RateLimiter();
   final modelProvider = ModelProvider();
   final apiService = GitHubApiService(storageService: storageService);
+  final repoProvider = RepoProvider(apiService: apiService);
   final authService = GitHubAuthService(
     storageService: storageService,
     apiService: apiService,
@@ -38,6 +40,7 @@ void main() async {
     modelProvider: modelProvider,
     authService: authService,
     apiService: apiService,
+    repoProvider: repoProvider,
   ));
 }
 
@@ -49,6 +52,7 @@ class MondayApp extends StatelessWidget {
     required this.modelProvider,
     required this.authService,
     required this.apiService,
+    required this.repoProvider,
   });
 
   final SecureStorageService storageService;
@@ -56,6 +60,7 @@ class MondayApp extends StatelessWidget {
   final ModelProvider modelProvider;
   final GitHubAuthService authService;
   final GitHubApiService apiService;
+  final RepoProvider repoProvider;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +69,7 @@ class MondayApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: modelProvider),
         ChangeNotifierProvider.value(value: rateLimiter),
         ChangeNotifierProvider.value(value: authService),
+        ChangeNotifierProvider.value(value: repoProvider),
         ChangeNotifierProvider(
           create: (_) => GroqService(
             storageService: storageService,
