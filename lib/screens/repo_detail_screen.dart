@@ -5,6 +5,7 @@ import '../models/github_branch.dart';
 import '../models/github_tree_entry.dart';
 import '../services/repo_provider.dart';
 import '../widgets/file_tree_tile.dart';
+import 'file_viewer_screen.dart';
 
 /// Detail screen for a selected repo — branch picker + file tree navigation.
 class RepoDetailScreen extends StatelessWidget {
@@ -188,21 +189,26 @@ class RepoDetailScreen extends StatelessWidget {
         indent: 56,
         color: Colors.white.withValues(alpha: 0.04),
       ),
-      itemBuilder: (_, i) {
+      itemBuilder: (ctx, i) {
         final entry = tree[i];
         return FileTreeTile(
           entry: entry,
-          onTap: () => _onEntryTap(entry, provider),
+          onTap: () => _onEntryTap(ctx, entry, provider),
         );
       },
     );
   }
 
-  void _onEntryTap(GitHubTreeEntry entry, RepoProvider provider) {
+  void _onEntryTap(BuildContext context, GitHubTreeEntry entry, RepoProvider provider) {
     if (entry.isDirectory) {
       provider.navigateInto(entry);
+    } else {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => FileViewerScreen(entry: entry),
+        ),
+      );
     }
-    // File taps will be handled in Feature 4 (AI explainer)
   }
 }
 
