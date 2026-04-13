@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../config/app_config.dart';
 import '../models/github_branch.dart';
+import '../models/github_commit.dart';
 import '../models/github_repo.dart';
 import '../models/github_tree_entry.dart';
 import '../models/github_user.dart';
@@ -121,5 +122,41 @@ class GitHubApiService {
 
     // GitHub returns base64 with newlines — strip them before decoding.
     return utf8.decode(base64Decode(content.replaceAll('\n', '')));
+  }
+
+  // — Commits ———————————————————————————————————————————
+
+  /// List commits for a repo on a given branch, paginated.
+  Future<List<GitHubCommit>> getCommits(
+    String owner,
+    String repo, {
+    String? sha,
+    int page = 1,
+    int perPage = 20,
+  }) async {
+    var url = '${AppConfig.githubApiUrl}/repos/$owner/$repo/commits'
+        '?per_page=$perPage&page=$page';
+    if (sha != null && sha.isNotEmpty) url += '&sha=$sha';
+
+    final res = await _authGet(url);
+    if (res == null) return [];
+
+    final list = jsonDecode(res.body) as List<dynamic>;
+    return list
+        .map((j) => GitHubCommit.fromJson(j as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// Fetch a single commit with full diff and stats.
+  Future<GitHubCommit?> getCommitDetail(
+    String owner,
+    String repo,
+    String sha,
+  ) async {
+    final res = await _authGet(
+      '${AppConfig.githubApiUrl}/repos/$owner/$repo/commits/$sha',
+    );
+    if (res == null) return null;
+    return GitHubCommit.fromJson(jsonDecode(res.body));
   }
 }

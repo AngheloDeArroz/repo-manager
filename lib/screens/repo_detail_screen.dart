@@ -5,6 +5,7 @@ import '../models/github_branch.dart';
 import '../models/github_tree_entry.dart';
 import '../services/repo_provider.dart';
 import '../widgets/file_tree_tile.dart';
+import 'commit_list_screen.dart';
 import 'file_viewer_screen.dart';
 
 /// Detail screen for a selected repo — branch picker + file tree navigation.
@@ -101,6 +102,15 @@ class RepoDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          // Commits button
+          IconButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const CommitListScreen()),
+            ),
+            icon: Icon(Icons.history_rounded,
+                color: Colors.white.withValues(alpha: 0.4), size: 20),
+            tooltip: 'Commits',
           ),
           if (provider.selectedRepo!.isPrivate)
             Container(
