@@ -159,4 +159,156 @@ class GitHubApiService {
     if (res == null) return null;
     return GitHubCommit.fromJson(jsonDecode(res.body));
   }
+
+  // — Write helpers ——————————————————————————————————————
+
+  /// Authenticated POST. Returns the response or `null` on auth failure.
+  Future<http.Response?> _authPost(String url, Map<String, dynamic> body) async {
+    final headers = await _authHeaders();
+    if (headers == null) return null;
+
+    try {
+      return await http.post(
+        Uri.parse(url),
+        headers: {...headers, 'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // — Branch creation ———————————————————————————————————
+
+  /// Create a new branch from an existing ref SHA.
+  ///
+  /// Returns `true` on success, `false` on failure.
+  Future<bool> createBranch(
+    String owner,
+    String repo,
+    String branchName,
+    String fromSha,
+  ) async {
+    final res = await _authPost(
+      '${AppConfig.githubApiUrl}/repos/$owner/$repo/git/refs',
+      {'ref': 'refs/heads/$branchName', 'sha': fromSha},
+    );
+    return res != null && (res.statusCode == 201 || res.statusCode == 200);
+  }
+
+  // — File commit (single file via Contents API) ————————
+
+  /// Create or update a single file on a branch.
+  ///
+  /// [sha] is the blob SHA of the existing file (required for updates,
+  /// null for creates).
+  Future<bool> createOrUpdateFile(
+    String owner,
+    String repo,
+    String path, {
+    required String content,
+    required String message,
+    required String branch,
+    String? sha,
+  }) async {
+    final headers = await _authHeaders();
+    if (headers == null) return false;
+
+    final body = <String, dynamic>{
+      'message': message,
+      'content': base64Encode(utf8.encode(content)),
+      'branch': branch,
+    };
+    if (sha != null) body['sha'] = sha;
+
+    try {
+      final res = await http.put(
+        Uri.parse(
+            '${AppConfig.githubApiUrl}/repos/$owner/$repo/contents/$path'),
+        headers: {...headers, 'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+      return res.statusCode == 200 || res.statusCode == 201;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  // — Multi-file commit (Git Data API) ——————————————————
+
+  /// Push multiple file changes as a single commit on [branch].
+  ///
+  /// Uses the low-level Git Data API:
+  /// 1. Create blobs for each file
+  /// 2. Create a tree referencing those blobs
+  /// 3. Create a commit pointing to the tree
+  /// 4. Update the branch ref
+  Future<bool> pushChanges(
+    String owner,
+    String repo, {
+    required String branch,
+    required String commitMessage,
+    required Map<String, String> files, // path → content
+    required String baseSha,
+  }) async {
+    try {
+      // 1. Get base tree SHA
+      final refRes = await _authGet(
+        '${AppConfig.githubApiUrl}/repos/$owner/$repo/git/commits/$baseSha',
+      );
+      if (refRes == null) return false;
+      final baseTreeSha =
+          (jsonDecode(refRes.body) as Map<String, dynamic>)['tree']['sha'] as String;
+
+      // 2. Create blobs
+      final treeItems = <Map<String, dynamic>>[];
+      for (final entry in files.entries) {
+        final blobRes = await _authPost(
+          '${AppConfig.githubApiUrl}/repos/$owner/$repo/git/blobs',
+          {'content': entry.value, 'encoding': 'utf-8'},
+        );
+        if (blobRes == null || blobRes.statusCode != 201) return false;
+        final blobSha = (jsonDecode(blobRes.body))['sha'] as String;
+        treeItems.add({
+          'path': entry.key,
+          'mode': '100644',
+          'type': 'blob',
+          'sha': blobSha,
+        });
+      }
+
+      // 3. Create tree
+      final treeRes = await _authPost(
+        '${AppConfig.githubApiUrl}/repos/$owner/$repo/git/trees',
+        {'base_tree': baseTreeSha, 'tree': treeItems},
+      );
+      if (treeRes == null || treeRes.statusCode != 201) return false;
+      final newTreeSha = (jsonDecode(treeRes.body))['sha'] as String;
+
+      // 4. Create commit
+      final commitRes = await _authPost(
+        '${AppConfig.githubApiUrl}/repos/$owner/$repo/git/commits',
+        {
+          'message': commitMessage,
+          'tree': newTreeSha,
+          'parents': [baseSha],
+        },
+      );
+      if (commitRes == null || commitRes.statusCode != 201) return false;
+      final newCommitSha = (jsonDecode(commitRes.body))['sha'] as String;
+
+      // 5. Update branch ref
+      final headers = await _authHeaders();
+      if (headers == null) return false;
+      final updateRes = await http.patch(
+        Uri.parse(
+            '${AppConfig.githubApiUrl}/repos/$owner/$repo/git/refs/heads/$branch'),
+        headers: {...headers, 'Content-Type': 'application/json'},
+        body: jsonEncode({'sha': newCommitSha}),
+      );
+      return updateRes.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
 }

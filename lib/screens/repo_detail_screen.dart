@@ -5,6 +5,7 @@ import '../models/github_branch.dart';
 import '../models/github_tree_entry.dart';
 import '../services/repo_provider.dart';
 import '../widgets/file_tree_tile.dart';
+import 'branch_workflow_screen.dart';
 import 'commit_list_screen.dart';
 import 'file_viewer_screen.dart';
 
@@ -111,6 +112,16 @@ class RepoDetailScreen extends StatelessWidget {
             icon: Icon(Icons.history_rounded,
                 color: Colors.white.withValues(alpha: 0.4), size: 20),
             tooltip: 'Commits',
+          ),
+          // Workflow button
+          IconButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (_) => const BranchWorkflowScreen()),
+            ),
+            icon: Icon(Icons.rocket_launch_rounded,
+                color: Colors.white.withValues(alpha: 0.4), size: 20),
+            tooltip: 'Branch Workflow',
           ),
           if (provider.selectedRepo!.isPrivate)
             Container(
