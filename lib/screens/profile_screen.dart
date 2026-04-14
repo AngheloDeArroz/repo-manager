@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../services/github_auth_service.dart';
+import '../services/model_provider.dart';
+import 'model_switcher_screen.dart';
 
 /// Profile screen — shows avatar, username, and sign-out button.
 class ProfileScreen extends StatelessWidget {
@@ -91,7 +93,54 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ],
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 32),
+
+              // — Model switcher tile ——————————————————————
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: OutlinedButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (_) => const ModelSwitcherScreen()),
+                  ),
+                  icon: Icon(Icons.psychology_rounded,
+                      size: 18,
+                      color: const Color(0xFF7C3AED).withValues(alpha: 0.8)),
+                  label: Row(
+                    children: [
+                      const Text(
+                        'AI Model',
+                        style: TextStyle(
+                          color: Color(0xFF7C3AED),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        context.watch<ModelProvider>().currentModel.label,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.35),
+                          fontSize: 13,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(Icons.chevron_right_rounded,
+                          size: 18,
+                          color: Colors.white.withValues(alpha: 0.2)),
+                    ],
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                        color: const Color(0xFF7C3AED).withValues(alpha: 0.2)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
 
               // — Sign out button ——————————————————————————
               SizedBox(
