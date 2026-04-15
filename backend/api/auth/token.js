@@ -36,6 +36,7 @@ export default async function handler(req, res) {
         client_id: clientId,
         client_secret: clientSecret,
         code,
+        redirect_uri: 'com.monday.app://callback',
       }),
     });
 

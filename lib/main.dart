@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 import 'screens/api_key_screen.dart';
@@ -17,6 +18,9 @@ import 'services/secure_storage_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load .env before anything reads AppConfig.clientId / clientSecret
+  await dotenv.load(fileName: '.env');
 
   final storageService = SecureStorageService();
   final rateLimiter = RateLimiter();
@@ -92,6 +96,35 @@ class MondayApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home: _RootGate(storageService: storageService),
+        onGenerateRoute: (settings) {
+          // Handle OAuth callback routes like "/?code=abc123"
+          final uri = Uri.tryParse(settings.name ?? '');
+          if (uri != null && uri.queryParameters.containsKey('code')) {
+            return MaterialPageRoute(
+              builder: (context) {
+                // Schedule the code exchange after the frame so context
+                // is fully available for Provider.
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  final code = uri.queryParameters['code'];
+                  if (code != null && code.isNotEmpty) {
+                    final auth = context.read<GitHubAuthService>();
+                    auth.exchangeCode(code);
+                  }
+                });
+                return _RootGate(storageService: storageService);
+              },
+            );
+          }
+          // Fallback — just show the root gate for any unknown route.
+          return MaterialPageRoute(
+            builder: (_) => _RootGate(storageService: storageService),
+          );
+        },
+        onUnknownRoute: (settings) {
+          return MaterialPageRoute(
+            builder: (_) => _RootGate(storageService: storageService),
+          );
+        },
       ),
     );
   }
@@ -154,13 +187,27 @@ class _RootGateState extends State<_RootGate> {
 
   /// Extract the `code` query parameter and hand it to [GitHubAuthService].
   void _handleDeepLink(Uri uri) {
+    debugPrint('[DeepLink] Received URI: $uri');
+
     // Only handle our OAuth callback scheme
-    if (uri.scheme != 'com.monday.app') return;
+    if (uri.scheme != 'com.monday.app') {
+      debugPrint('[DeepLink] Ignoring — scheme "${uri.scheme}" is not ours');
+      return;
+    }
 
     final code = uri.queryParameters['code'];
     if (code != null && code.isNotEmpty) {
+      debugPrint('[DeepLink] Authorization code found — starting exchange');
       final auth = context.read<GitHubAuthService>();
       auth.exchangeCode(code);
+    } else {
+      // GitHub may redirect with ?error=access_denied if the user cancels
+      final error = uri.queryParameters['error_description'] ??
+          uri.queryParameters['error'] ??
+          'No authorization code received';
+      debugPrint('[DeepLink] No code in callback: $error');
+      final auth = context.read<GitHubAuthService>();
+      auth.setError(error);
     }
   }
 

@@ -1,19 +1,26 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 /// App-wide configuration constants.
 ///
-/// [clientId] is the GitHub OAuth App's public client ID — safe in source.
-/// [clientSecret] is NEVER stored here — it lives in the Vercel backend only.
+/// [clientId] and [clientSecret] are read from the `.env` file at runtime
+/// so they never appear in source control.
 class AppConfig {
   AppConfig._();
 
-  /// GitHub OAuth App client ID (public).
-  static const clientId = 'Ov23liJ1PFcqYRKaq8c8';
+  /// GitHub OAuth App client ID — loaded from `.env`.
+  static String get clientId => dotenv.env['GITHUB_CLIENT_ID'] ?? '';
+
+  /// GitHub OAuth App client secret — loaded from `.env`.
+  static String get clientSecret => dotenv.env['GITHUB_CLIENT_SECRET'] ?? '';
 
   /// Custom URI scheme registered in Android/iOS for OAuth redirect.
   static const redirectUri = 'com.monday.app://callback';
 
-  /// Vercel backend base URL — update after deployment.
-  /// Example: https://monday-backend.vercel.app
+  /// Vercel backend base URL — used as fallback for token revocation etc.
   static const backendUrl = 'https://backend-ten-orcin-76.vercel.app';
+
+  /// GitHub OAuth token exchange endpoint (POST).
+  static const tokenUrl = 'https://github.com/login/oauth/access_token';
 
   /// GitHub OAuth scopes.
   static const scopes = ['repo', 'read:user'];
