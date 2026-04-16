@@ -37,9 +37,11 @@ class RepoProvider extends ChangeNotifier {
     if (_searchQuery.isEmpty) return _repos;
     final q = _searchQuery.toLowerCase();
     return _repos
-        .where((r) =>
-            r.name.toLowerCase().contains(q) ||
-            (r.description?.toLowerCase().contains(q) ?? false))
+        .where(
+          (r) =>
+              r.name.toLowerCase().contains(q) ||
+              (r.description?.toLowerCase().contains(q) ?? false),
+        )
         .toList();
   }
 
@@ -101,6 +103,11 @@ class RepoProvider extends ChangeNotifier {
   GitHubBranch? _selectedBranch;
   GitHubBranch? get selectedBranch => _selectedBranch;
 
+  String? _branchError;
+  String? get branchError => _branchError;
+
+  bool get hasSelectedBranchSha => _selectedBranch?.sha.isNotEmpty ?? false;
+
   bool _isLoadingBranches = false;
   bool get isLoadingBranches => _isLoadingBranches;
 
@@ -131,6 +138,7 @@ class RepoProvider extends ChangeNotifier {
     _selectedRepo = repo;
     _branches = [];
     _selectedBranch = null;
+    _branchError = null;
     _treeStack.clear();
     _treeError = null;
     notifyListeners();
@@ -143,12 +151,23 @@ class RepoProvider extends ChangeNotifier {
     _isLoadingBranches = false;
 
     // Pre-select default branch
-    _selectedBranch = _branches.firstWhere(
-      (b) => b.name == repo.defaultBranch,
-      orElse: () => _branches.isNotEmpty
-          ? _branches.first
-          : GitHubBranch(name: repo.defaultBranch, sha: ''),
-    );
+    GitHubBranch? selectedBranch;
+    if (_branches.isNotEmpty) {
+      selectedBranch = _branches.firstWhere(
+        (b) => b.name == repo.defaultBranch,
+        orElse: () => _branches.first,
+      );
+    }
+    _selectedBranch = selectedBranch;
+
+    if (_branches.isEmpty || _selectedBranch == null) {
+      _branchError = 'Could not load branches for ${repo.fullName}.';
+    } else if (_selectedBranch!.sha.isEmpty) {
+      _branchError = 'Selected branch ${_selectedBranch!.name} has no SHA.';
+      _selectedBranch = null;
+    } else {
+      _branchError = null;
+    }
     notifyListeners();
 
     // Load root tree
@@ -160,6 +179,9 @@ class RepoProvider extends ChangeNotifier {
   /// Switch to a different branch → reload root tree.
   Future<void> selectBranch(GitHubBranch branch) async {
     _selectedBranch = branch;
+    _branchError = branch.sha.isEmpty
+        ? 'Selected branch ${branch.name} has no SHA.'
+        : null;
     _treeStack.clear();
     _treeError = null;
     notifyListeners();

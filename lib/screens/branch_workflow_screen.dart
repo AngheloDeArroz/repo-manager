@@ -34,15 +34,74 @@ class _BranchWorkflowScreenState extends State<BranchWorkflowScreen> {
     super.dispose();
   }
 
+  String? _publishPreflightError(RepoProvider provider) {
+    final repo = provider.selectedRepo;
+    if (repo == null) {
+      return 'Select a repository before continuing.';
+    }
+
+    if (provider.branchError != null) {
+      return provider.branchError;
+    }
+
+    final branch = provider.selectedBranch;
+    if (branch == null) {
+      return 'Select a branch before approving changes.';
+    }
+
+    if (branch.sha.isEmpty) {
+      return 'The selected branch does not have a commit SHA yet.';
+    }
+
+    return null;
+  }
+
+  Widget _buildBranchWarning(String message) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFBBF24).withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: const Color(0xFFFBBF24).withValues(alpha: 0.18),
+        ),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.warning_rounded, size: 16, color: Color(0xFFFBBF24)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                color: const Color(0xFFFBBF24).withValues(alpha: 0.95),
+                fontSize: 12.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   // — Generate proposal via AI ——————————————————————————
 
   Future<void> _generate() async {
     final taskText = _taskController.text.trim();
     if (taskText.isEmpty) return;
 
-    final repo = context.read<RepoProvider>().selectedRepo;
-    final branch = context.read<RepoProvider>().selectedBranch;
-    if (repo == null || branch == null) return;
+    final provider = context.read<RepoProvider>();
+    final preflightError = _publishPreflightError(provider);
+    if (preflightError != null) {
+      setState(() {
+        _error = preflightError;
+      });
+      return;
+    }
+
+    final repo = provider.selectedRepo!;
+    final branch = provider.selectedBranch!;
 
     setState(() {
       _isGenerating = true;
@@ -120,11 +179,9 @@ Rules:
     for (final match in filePattern.allMatches(text)) {
       final path = match.group(1)!.trim();
       final content = match.group(2)!.trim();
-      files.add(FileChange(
-        path: path,
-        newContent: content,
-        action: FileAction.create,
-      ));
+      files.add(
+        FileChange(path: path, newContent: content, action: FileAction.create),
+      );
     }
 
     return ProposedChange(
@@ -163,7 +220,7 @@ Rules:
         branch.sha,
       );
 
-      if (!branchCreated) {
+      if (!branchCreated.success) {
         if (!mounted) return;
         setState(() {
           _isPushing = false;
@@ -189,7 +246,7 @@ Rules:
           baseSha: branch.sha,
         );
 
-        if (!pushed) {
+        if (!pushed.success) {
           if (!mounted) return;
           setState(() {
             _isPushing = false;
@@ -205,8 +262,7 @@ Rules:
       setState(() {
         _isPushing = false;
         proposal.status = ProposedChangeStatus.pushed;
-        _successMessage =
-            'Pushed to ${proposal.branchName} ✓';
+        _successMessage = 'Pushed to ${proposal.branchName} ✓';
       });
     } catch (e) {
       if (!mounted) return;
@@ -239,12 +295,14 @@ Rules:
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<RepoProvider>();
+
     return Scaffold(
       backgroundColor: const Color(0xFF0F0F1A),
       body: SafeArea(
         child: Column(
           children: [
-            _buildAppBar(),
+            _buildAppBar(context, provider),
             Divider(height: 1, color: Colors.white.withValues(alpha: 0.06)),
             Expanded(
               child: SingleChildScrollView(
@@ -252,14 +310,18 @@ Rules:
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildTaskInput(),
+                    _buildTaskInput(provider),
+                    if (provider.branchError != null) ...[
+                      const SizedBox(height: 12),
+                      _buildBranchWarning(provider.branchError!),
+                    ],
                     if (_error != null) _buildError(),
                     if (_successMessage != null) _buildSuccess(),
                     if (_proposal != null) ...[
                       const SizedBox(height: 20),
                       _buildProposalCard(),
                       const SizedBox(height: 16),
-                      _buildActionButtons(),
+                      _buildActionButtons(provider),
                     ],
                   ],
                 ),
@@ -271,17 +333,18 @@ Rules:
     );
   }
 
-  Widget _buildAppBar() {
-    final provider = context.watch<RepoProvider>();
-
+  Widget _buildAppBar(BuildContext context, RepoProvider provider) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
       child: Row(
         children: [
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.arrow_back_rounded,
-                color: Colors.white, size: 22),
+            icon: const Icon(
+              Icons.arrow_back_rounded,
+              color: Colors.white,
+              size: 22,
+            ),
           ),
           const SizedBox(width: 4),
           const Expanded(
@@ -302,13 +365,17 @@ Rules:
                 color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(
-                    color: const Color(0xFF7C3AED).withValues(alpha: 0.2)),
+                  color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.call_split_rounded,
-                      size: 12, color: Color(0xFF7C3AED)),
+                  const Icon(
+                    Icons.call_split_rounded,
+                    size: 12,
+                    color: Color(0xFF7C3AED),
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     provider.selectedBranch!.name,
@@ -326,7 +393,12 @@ Rules:
     );
   }
 
-  Widget _buildTaskInput() {
+  Widget _buildTaskInput(RepoProvider provider) {
+    final canGenerate =
+        !_isGenerating &&
+        !_isPushing &&
+        _publishPreflightError(provider) == null;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -351,10 +423,8 @@ Rules:
             minLines: 3,
             style: const TextStyle(color: Colors.white, fontSize: 13.5),
             decoration: InputDecoration(
-              hintText:
-                  'e.g. "Add a loading spinner to the login screen"',
-              hintStyle:
-                  TextStyle(color: Colors.white.withValues(alpha: 0.2)),
+              hintText: 'e.g. "Add a loading spinner to the login screen"',
+              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.2)),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.all(14),
             ),
@@ -365,29 +435,34 @@ Rules:
           width: double.infinity,
           height: 44,
           child: ElevatedButton.icon(
-            onPressed:
-                _isGenerating || _isPushing ? null : _generate,
+            onPressed: canGenerate ? _generate : null,
             icon: _isGenerating
                 ? const SizedBox(
                     width: 16,
                     height: 16,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white70),
+                      strokeWidth: 2,
+                      color: Colors.white70,
+                    ),
                   )
                 : const Icon(Icons.auto_awesome_rounded, size: 18),
             label: Text(
               _isGenerating ? 'Generating…' : 'Generate Plan',
               style: const TextStyle(
-                  fontWeight: FontWeight.w600, fontSize: 13.5),
+                fontWeight: FontWeight.w600,
+                fontSize: 13.5,
+              ),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF7C3AED),
               foregroundColor: Colors.white,
-              disabledBackgroundColor:
-                  const Color(0xFF7C3AED).withValues(alpha: 0.5),
+              disabledBackgroundColor: const Color(
+                0xFF7C3AED,
+              ).withValues(alpha: 0.5),
               disabledForegroundColor: Colors.white70,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
+                borderRadius: BorderRadius.circular(10),
+              ),
               elevation: 0,
             ),
           ),
@@ -406,12 +481,16 @@ Rules:
           color: const Color(0xFFEF4444).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-              color: const Color(0xFFEF4444).withValues(alpha: 0.2)),
+            color: const Color(0xFFEF4444).withValues(alpha: 0.2),
+          ),
         ),
         child: Row(
           children: [
-            const Icon(Icons.error_outline_rounded,
-                size: 16, color: Color(0xFFEF4444)),
+            const Icon(
+              Icons.error_outline_rounded,
+              size: 16,
+              color: Color(0xFFEF4444),
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
@@ -438,12 +517,16 @@ Rules:
           color: const Color(0xFF22C55E).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-              color: const Color(0xFF22C55E).withValues(alpha: 0.2)),
+            color: const Color(0xFF22C55E).withValues(alpha: 0.2),
+          ),
         ),
         child: Row(
           children: [
-            const Icon(Icons.check_circle_rounded,
-                size: 16, color: Color(0xFF22C55E)),
+            const Icon(
+              Icons.check_circle_rounded,
+              size: 16,
+              color: Color(0xFF22C55E),
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
@@ -479,14 +562,17 @@ Rules:
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: const Color(0xFF7C3AED).withValues(alpha: 0.06),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(14)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(14),
+              ),
             ),
             child: Row(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFF7C3AED), Color(0xFF2563EB)],
@@ -561,7 +647,9 @@ Rules:
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(RepoProvider provider) {
+    final canApprove = !_isPushing && _publishPreflightError(provider) == null;
+
     if (_proposal?.status == ProposedChangeStatus.pushed) {
       return const SizedBox.shrink();
     }
@@ -575,14 +663,18 @@ Rules:
             child: OutlinedButton.icon(
               onPressed: _isPushing ? null : _reject,
               icon: const Icon(Icons.close_rounded, size: 16),
-              label: const Text('Reject',
-                  style: TextStyle(fontWeight: FontWeight.w600)),
+              label: const Text(
+                'Reject',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: const Color(0xFFEF4444),
                 side: BorderSide(
-                    color: const Color(0xFFEF4444).withValues(alpha: 0.3)),
+                  color: const Color(0xFFEF4444).withValues(alpha: 0.3),
+                ),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
           ),
@@ -596,14 +688,18 @@ Rules:
             child: OutlinedButton.icon(
               onPressed: _isPushing ? null : _revise,
               icon: const Icon(Icons.edit_rounded, size: 16),
-              label: const Text('Revise',
-                  style: TextStyle(fontWeight: FontWeight.w600)),
+              label: const Text(
+                'Revise',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: const Color(0xFFFBBF24),
                 side: BorderSide(
-                    color: const Color(0xFFFBBF24).withValues(alpha: 0.3)),
+                  color: const Color(0xFFFBBF24).withValues(alpha: 0.3),
+                ),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
           ),
@@ -616,28 +712,34 @@ Rules:
           child: SizedBox(
             height: 44,
             child: ElevatedButton.icon(
-              onPressed: _isPushing ? null : _approve,
+              onPressed: canApprove ? _approve : null,
               icon: _isPushing
                   ? const SizedBox(
                       width: 16,
                       height: 16,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white70),
+                        strokeWidth: 2,
+                        color: Colors.white70,
+                      ),
                     )
                   : const Icon(Icons.check_rounded, size: 18),
               label: Text(
                 _isPushing ? 'Pushing…' : 'Approve & Push',
                 style: const TextStyle(
-                    fontWeight: FontWeight.w700, fontSize: 13.5),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13.5,
+                ),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF22C55E),
                 foregroundColor: Colors.white,
-                disabledBackgroundColor:
-                    const Color(0xFF22C55E).withValues(alpha: 0.5),
+                disabledBackgroundColor: const Color(
+                  0xFF22C55E,
+                ).withValues(alpha: 0.5),
                 disabledForegroundColor: Colors.white70,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 elevation: 0,
               ),
             ),
@@ -732,17 +834,19 @@ class _FileChangeTile extends StatelessWidget {
             Text(
               '+${file.additions}',
               style: const TextStyle(
-                  color: Color(0xFF22C55E),
-                  fontSize: 10.5,
-                  fontFamily: 'monospace'),
+                color: Color(0xFF22C55E),
+                fontSize: 10.5,
+                fontFamily: 'monospace',
+              ),
             ),
             const SizedBox(width: 6),
             Text(
               '-${file.deletions}',
               style: const TextStyle(
-                  color: Color(0xFFEF4444),
-                  fontSize: 10.5,
-                  fontFamily: 'monospace'),
+                color: Color(0xFFEF4444),
+                fontSize: 10.5,
+                fontFamily: 'monospace',
+              ),
             ),
           ],
         ),

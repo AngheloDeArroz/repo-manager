@@ -25,7 +25,9 @@ void main() async {
   final storageService = SecureStorageService();
   final rateLimiter = RateLimiter();
   final modelProvider = ModelProvider();
-  final apiService = GitHubApiService(storageService: storageService);
+  final apiService = GitHubApiService(
+    getGitHubToken: storageService.getGitHubToken,
+  );
   final repoProvider = RepoProvider(apiService: apiService);
   final authService = GitHubAuthService(
     storageService: storageService,
@@ -38,14 +40,16 @@ void main() async {
     authService.init(),
   ]);
 
-  runApp(MondayApp(
-    storageService: storageService,
-    rateLimiter: rateLimiter,
-    modelProvider: modelProvider,
-    authService: authService,
-    apiService: apiService,
-    repoProvider: repoProvider,
-  ));
+  runApp(
+    MondayApp(
+      storageService: storageService,
+      rateLimiter: rateLimiter,
+      modelProvider: modelProvider,
+      authService: authService,
+      apiService: apiService,
+      repoProvider: repoProvider,
+    ),
+  );
 }
 
 class MondayApp extends StatelessWidget {
@@ -202,7 +206,8 @@ class _RootGateState extends State<_RootGate> {
       auth.exchangeCode(code);
     } else {
       // GitHub may redirect with ?error=access_denied if the user cancels
-      final error = uri.queryParameters['error_description'] ??
+      final error =
+          uri.queryParameters['error_description'] ??
           uri.queryParameters['error'] ??
           'No authorization code received';
       debugPrint('[DeepLink] No code in callback: $error');
@@ -224,9 +229,7 @@ class _RootGateState extends State<_RootGate> {
 
     // Step 1: Need Groq API key
     if (!_hasApiKey) {
-      return ApiKeyScreen(
-        onKeySaved: () => setState(() => _hasApiKey = true),
-      );
+      return ApiKeyScreen(onKeySaved: () => setState(() => _hasApiKey = true));
     }
 
     // Step 2: Need GitHub login
@@ -239,4 +242,3 @@ class _RootGateState extends State<_RootGate> {
     return const HomeScreen();
   }
 }
-

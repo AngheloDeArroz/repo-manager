@@ -43,15 +43,35 @@ class RepoDetailScreen extends StatelessWidget {
               // — Branch selector ——————————————————————————
               _BranchSelector(provider: provider),
 
+              if (provider.branchError != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEF4444).withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: const Color(0xFFEF4444).withValues(alpha: 0.18),
+                      ),
+                    ),
+                    child: Text(
+                      provider.branchError!,
+                      style: TextStyle(
+                        color: const Color(0xFFEF4444).withValues(alpha: 0.95),
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ),
+                ),
+
               // — Breadcrumbs ——————————————————————————————
               if (provider.breadcrumbs.isNotEmpty)
                 _Breadcrumbs(provider: provider),
 
               // — Divider —————————————————————————————————
-              Divider(
-                height: 1,
-                color: Colors.white.withValues(alpha: 0.06),
-              ),
+              Divider(height: 1, color: Colors.white.withValues(alpha: 0.06)),
 
               // — Tree ————————————————————————————————————
               Expanded(child: _buildTree(provider)),
@@ -75,8 +95,11 @@ class RepoDetailScreen extends StatelessWidget {
                 Navigator.of(context).pop();
               }
             },
-            icon: const Icon(Icons.arrow_back_rounded,
-                color: Colors.white, size: 22),
+            icon: const Icon(
+              Icons.arrow_back_rounded,
+              color: Colors.white,
+              size: 22,
+            ),
           ),
           const SizedBox(width: 4),
           Expanded(
@@ -106,22 +129,32 @@ class RepoDetailScreen extends StatelessWidget {
           ),
           // Commits button
           IconButton(
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const CommitListScreen()),
+            onPressed: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const CommitListScreen())),
+            icon: Icon(
+              Icons.history_rounded,
+              color: Colors.white.withValues(alpha: 0.4),
+              size: 20,
             ),
-            icon: Icon(Icons.history_rounded,
-                color: Colors.white.withValues(alpha: 0.4), size: 20),
             tooltip: 'Commits',
           ),
           // Workflow button
           IconButton(
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (_) => const BranchWorkflowScreen()),
+            onPressed:
+                provider.hasSelectedBranchSha && provider.branchError == null
+                ? () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const BranchWorkflowScreen(),
+                    ),
+                  )
+                : null,
+            icon: Icon(
+              Icons.rocket_launch_rounded,
+              color: Colors.white.withValues(alpha: 0.4),
+              size: 20,
             ),
-            icon: Icon(Icons.rocket_launch_rounded,
-                color: Colors.white.withValues(alpha: 0.4), size: 20),
-            tooltip: 'Branch Workflow',
+            tooltip: provider.branchError ?? 'Branch Workflow',
           ),
           if (provider.selectedRepo!.isPrivate)
             Container(
@@ -133,8 +166,7 @@ class RepoDetailScreen extends StatelessWidget {
               child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.lock_rounded,
-                      size: 11, color: Color(0xFFFBBF24)),
+                  Icon(Icons.lock_rounded, size: 11, color: Color(0xFFFBBF24)),
                   SizedBox(width: 3),
                   Text(
                     'Private',
@@ -164,8 +196,11 @@ class RepoDetailScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline_rounded,
-                size: 36, color: Colors.white.withValues(alpha: 0.15)),
+            Icon(
+              Icons.error_outline_rounded,
+              size: 36,
+              color: Colors.white.withValues(alpha: 0.15),
+            ),
             const SizedBox(height: 10),
             Text(
               provider.treeError!,
@@ -220,15 +255,17 @@ class RepoDetailScreen extends StatelessWidget {
     );
   }
 
-  void _onEntryTap(BuildContext context, GitHubTreeEntry entry, RepoProvider provider) {
+  void _onEntryTap(
+    BuildContext context,
+    GitHubTreeEntry entry,
+    RepoProvider provider,
+  ) {
     if (entry.isDirectory) {
       provider.navigateInto(entry);
     } else {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => FileViewerScreen(entry: entry),
-        ),
-      );
+      Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => FileViewerScreen(entry: entry)));
     }
   }
 }
@@ -262,8 +299,11 @@ class _BranchSelector extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.call_split_rounded,
-                      size: 14, color: Color(0xFF7C3AED)),
+                  const Icon(
+                    Icons.call_split_rounded,
+                    size: 14,
+                    color: Color(0xFF7C3AED),
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     provider.selectedBranch?.name ?? '…',
@@ -274,9 +314,11 @@ class _BranchSelector extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  Icon(Icons.keyboard_arrow_down_rounded,
-                      size: 16,
-                      color: const Color(0xFF7C3AED).withValues(alpha: 0.6)),
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    size: 16,
+                    color: const Color(0xFF7C3AED).withValues(alpha: 0.6),
+                  ),
                 ],
               ),
             ),
@@ -380,13 +422,15 @@ class _BranchSheet extends StatelessWidget {
                         ? const Color(0xFF7C3AED)
                         : Colors.white.withValues(alpha: 0.7),
                     fontSize: 13.5,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.w400,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                   ),
                 ),
                 trailing: isSelected
-                    ? const Icon(Icons.check_rounded,
-                        size: 16, color: Color(0xFF7C3AED))
+                    ? const Icon(
+                        Icons.check_rounded,
+                        size: 16,
+                        color: Color(0xFF7C3AED),
+                      )
                     : null,
                 onTap: () => onSelect(b),
               );
@@ -416,8 +460,11 @@ class _Breadcrumbs extends StatelessWidget {
         itemCount: crumbs.length + 1, // +1 for root
         separatorBuilder: (_, _) => Padding(
           padding: const EdgeInsets.symmetric(horizontal: 2),
-          child: Icon(Icons.chevron_right_rounded,
-              size: 14, color: Colors.white.withValues(alpha: 0.15)),
+          child: Icon(
+            Icons.chevron_right_rounded,
+            size: 14,
+            color: Colors.white.withValues(alpha: 0.15),
+          ),
         ),
         itemBuilder: (_, i) {
           final isLast = i == crumbs.length;
