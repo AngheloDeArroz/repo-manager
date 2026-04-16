@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/groq_model.dart';
+import '../services/api_key_manager.dart';
 import '../services/model_provider.dart';
 import '../services/rate_limiter.dart';
+import '../widgets/needs_api_key_prompt.dart';
 
 /// Full-screen model switcher with detailed cards, usage stats, and live limits.
 class ModelSwitcherScreen extends StatelessWidget {
@@ -42,6 +44,11 @@ class ModelSwitcherScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
+
+          if (context.watch<ApiKeyManager>().keys.isEmpty) ...[
+            const NeedsApiKeyPrompt(),
+            const SizedBox(height: 20),
+          ],
 
           // — Model cards ————————————————————————————————
           ...GroqModel.values.map((model) {

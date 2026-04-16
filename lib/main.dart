@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
-import 'screens/api_key_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
+import 'services/api_key_manager.dart';
 import 'services/github_api_service.dart';
 import 'services/github_auth_service.dart';
 import 'services/groq_service.dart';
@@ -23,6 +23,7 @@ void main() async {
   await dotenv.load(fileName: '.env');
 
   final storageService = SecureStorageService();
+  final apiKeyManager = ApiKeyManager(storageService: storageService);
   final rateLimiter = RateLimiter();
   final modelProvider = ModelProvider();
   final apiService = GitHubApiService(
@@ -35,6 +36,7 @@ void main() async {
   );
 
   await Future.wait([
+    apiKeyManager.init(),
     rateLimiter.init(),
     modelProvider.init(),
     authService.init(),
@@ -43,6 +45,7 @@ void main() async {
   runApp(
     MondayApp(
       storageService: storageService,
+      apiKeyManager: apiKeyManager,
       rateLimiter: rateLimiter,
       modelProvider: modelProvider,
       authService: authService,
@@ -56,6 +59,7 @@ class MondayApp extends StatelessWidget {
   const MondayApp({
     super.key,
     required this.storageService,
+    required this.apiKeyManager,
     required this.rateLimiter,
     required this.modelProvider,
     required this.authService,
@@ -64,6 +68,7 @@ class MondayApp extends StatelessWidget {
   });
 
   final SecureStorageService storageService;
+  final ApiKeyManager apiKeyManager;
   final RateLimiter rateLimiter;
   final ModelProvider modelProvider;
   final GitHubAuthService authService;
@@ -74,13 +79,14 @@ class MondayApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider.value(value: apiKeyManager),
         ChangeNotifierProvider.value(value: modelProvider),
         ChangeNotifierProvider.value(value: rateLimiter),
         ChangeNotifierProvider.value(value: authService),
         ChangeNotifierProvider.value(value: repoProvider),
         ChangeNotifierProvider(
           create: (_) => GroqService(
-            storageService: storageService,
+            apiKeyManager: apiKeyManager,
             rateLimiter: rateLimiter,
           ),
         ),
@@ -147,16 +153,12 @@ class _RootGate extends StatefulWidget {
 }
 
 class _RootGateState extends State<_RootGate> {
-  bool _loading = true;
-  bool _hasApiKey = false;
-
   late final AppLinks _appLinks;
   StreamSubscription<Uri>? _linkSub;
 
   @override
   void initState() {
     super.initState();
-    _checkKey();
     _initDeepLinks();
   }
 
@@ -164,16 +166,6 @@ class _RootGateState extends State<_RootGate> {
   void dispose() {
     _linkSub?.cancel();
     super.dispose();
-  }
-
-  Future<void> _checkKey() async {
-    final has = await widget.storageService.hasApiKey();
-    if (mounted) {
-      setState(() {
-        _loading = false;
-        _hasApiKey = has;
-      });
-    }
   }
 
   /// Set up deep-link handling for the OAuth callback.
@@ -218,27 +210,13 @@ class _RootGateState extends State<_RootGate> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
-      return const Scaffold(
-        backgroundColor: Color(0xFF0F0F1A),
-        body: Center(
-          child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
-        ),
-      );
-    }
-
-    // Step 1: Need Groq API key
-    if (!_hasApiKey) {
-      return ApiKeyScreen(onKeySaved: () => setState(() => _hasApiKey = true));
-    }
-
-    // Step 2: Need GitHub login
+    // Step 1: Need GitHub login
     final auth = context.watch<GitHubAuthService>();
     if (!auth.isLoggedIn) {
       return const LoginScreen();
     }
 
-    // Step 3: All set
+    // Step 2: All set
     return const HomeScreen();
   }
 }

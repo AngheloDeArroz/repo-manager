@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/exceptions.dart';
 import '../models/proposed_change.dart';
+import '../services/api_key_manager.dart';
 import '../services/groq_service.dart';
 import '../services/model_provider.dart';
 import '../services/repo_provider.dart';
+import '../widgets/needs_api_key_prompt.dart';
 
 /// Branch workflow UI — the approve / reject / revise gate.
 ///
@@ -113,9 +116,11 @@ class _BranchWorkflowScreenState extends State<BranchWorkflowScreen> {
     final groq = context.read<GroqService>();
     final model = context.read<ModelProvider>().currentModel;
 
-    final reply = await groq.sendPrompt(
-      model: model,
-      systemPrompt: '''You are Monday, a professional developer assistant.
+    String? reply;
+    try {
+      reply = await groq.sendPrompt(
+        model: model,
+        systemPrompt: '''You are Monday, a professional developer assistant.
 Given a task, generate a structured response in this EXACT format:
 
 BRANCH: type/description (lowercase, hyphen-separated, no words: ai, auto, bot, assistant, generated)
@@ -133,11 +138,26 @@ Rules:
 - Use the repository context provided
 - One branch per task
 - Never touch files outside task scope''',
-      userContent:
-          'Repository: ${repo.fullName}\nCurrent branch: ${branch.name}\n\nTask: $taskText',
-      maxTokens: 2048,
-      temperature: 0.4,
-    );
+        userContent:
+            'Repository: ${repo.fullName}\nCurrent branch: ${branch.name}\n\nTask: $taskText',
+        maxTokens: 2048,
+        temperature: 0.4,
+      );
+    } on NoApiKeyException {
+      if (!mounted) return;
+      setState(() {
+        _isGenerating = false;
+        _error = 'No active API key. Please add one in Settings.';
+      });
+      return;
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isGenerating = false;
+        _error = 'Error calling AI: $e';
+      });
+      return;
+    }
 
     if (!mounted) return;
 
@@ -310,6 +330,10 @@ Rules:
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (context.watch<ApiKeyManager>().keys.isEmpty) ...[
+                      const NeedsApiKeyPrompt(),
+                      const SizedBox(height: 16),
+                    ],
                     _buildTaskInput(provider),
                     if (provider.branchError != null) ...[
                       const SizedBox(height: 12),

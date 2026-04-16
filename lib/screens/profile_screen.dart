@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../services/github_auth_service.dart';
 import '../services/model_provider.dart';
 import 'model_switcher_screen.dart';
+import 'settings/api_keys_screen.dart';
 
 /// Profile screen — shows avatar, username, and sign-out button.
 class ProfileScreen extends StatelessWidget {
@@ -94,6 +95,45 @@ class ProfileScreen extends StatelessWidget {
               ],
 
               const SizedBox(height: 32),
+
+              // — API Keys tile ——————————————————————————————
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: OutlinedButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (_) => const ApiKeysScreen()),
+                  ),
+                  icon: Icon(Icons.key_rounded,
+                      size: 18,
+                      color: const Color(0xFF2563EB).withValues(alpha: 0.8)),
+                  label: Row(
+                    children: [
+                      const Text(
+                        'API Keys',
+                        style: TextStyle(
+                          color: Color(0xFF2563EB),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const Spacer(),
+                      Icon(Icons.chevron_right_rounded,
+                          size: 18,
+                          color: Colors.white.withValues(alpha: 0.2)),
+                    ],
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                        color: const Color(0xFF2563EB).withValues(alpha: 0.2)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
 
               // — Model switcher tile ——————————————————————
               SizedBox(

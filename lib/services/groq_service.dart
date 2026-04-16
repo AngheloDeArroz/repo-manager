@@ -1,20 +1,21 @@
 import 'dart:convert';
+import '../models/groq_model.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-import '../models/groq_model.dart';
+import '../models/exceptions.dart';
+import 'api_key_manager.dart';
 import 'rate_limiter.dart';
-import 'secure_storage_service.dart';
 
 /// Handles communication with the Groq chat-completions API.
 class GroqService extends ChangeNotifier {
   GroqService({
-    required this.storageService,
+    required this.apiKeyManager,
     required this.rateLimiter,
   });
 
-  final SecureStorageService storageService;
+  final ApiKeyManager apiKeyManager;
   final RateLimiter rateLimiter;
 
   static const _baseUrl = 'https://api.groq.com/openai/v1/chat/completions';
@@ -27,8 +28,8 @@ class GroqService extends ChangeNotifier {
 
   /// Send a prompt to Groq and return the assistant's reply.
   ///
-  /// Returns `null` if the request was blocked by rate limits, the API key
-  /// is missing, or the API returned an error.
+  /// Returns `null` if the request was blocked by rate limits or the API returned an error.
+  /// Throws [NoApiKeyException] if no active API key is found.
   Future<String?> sendPrompt({
     required GroqModel model,
     required String systemPrompt,
@@ -43,12 +44,11 @@ class GroqService extends ChangeNotifier {
       return null;
     }
 
-    final apiKey = await storageService.getApiKey();
-    if (apiKey == null || apiKey.isEmpty) {
-      _lastError = 'Groq API key not set.';
-      notifyListeners();
-      return null;
+    final activeKey = apiKeyManager.getActiveKey();
+    if (activeKey == null || activeKey.value.isEmpty) {
+      throw NoApiKeyException();
     }
+    final apiKey = activeKey.value;
 
     // --- Request -------------------------------------------------------------
     _isLoading = true;
