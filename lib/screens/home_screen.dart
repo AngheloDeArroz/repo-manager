@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../services/github_auth_service.dart';
 import '../services/groq_service.dart';
 import '../services/model_provider.dart';
+import '../models/github_user.dart';
 import '../widgets/model_picker_button.dart';
+import '../widgets/pixel_banner.dart';
 import 'profile_screen.dart';
 import 'repo_list_screen.dart';
 
@@ -20,25 +23,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<GitHubAuthService>();
+
     return Scaffold(
       backgroundColor: const Color(0xFF0D1117),
       body: SafeArea(
         child: Column(
           children: [
             // — Top bar (shared) ——————————————————————————
-            _buildTopBar(),
+            _buildTopBar(auth.user),
 
             // — Tab content ——————————————————————————————
             Expanded(
               child: IndexedStack(
                 index: _tabIndex,
-                children: const [
-                  _ChatTab(),
-                  RepoListScreen(),
-                ],
+                children: const [_ChatTab(), RepoListScreen()],
               ),
             ),
-
           ],
         ),
       ),
@@ -46,44 +47,46 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildTopBar() {
+  Widget _buildTopBar(GitHubUser? user) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
       child: Row(
         children: [
-          Container(
-            width: 34,
-            height: 34,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              gradient: const LinearGradient(
-                colors: [Color(0xFF39D353), Color(0xFF26A641)],
-              ),
-            ),
-            child: const Center(
-              child: Text('M',
-                  style: TextStyle(
-                      color: Color(0xFFE6EDF3),
-                      fontWeight: FontWeight.w800,
-                      fontSize: 16)),
-            ),
-          ),
-          const SizedBox(width: 10),
-          const Text(
-            'Monday',
-            style: TextStyle(
-              color: Color(0xFFE6EDF3),
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.5,
-            ),
+          const SizedBox(
+            height: 24, // Keep it app-bar sized
+            child: PixelBanner(text: 'Monday'),
           ),
           const Spacer(),
-          IconButton(
-            icon: Icon(Icons.settings_outlined,
-                color: const Color(0xFF8B949E), size: 22),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const ProfileScreen()),
+          InkWell(
+            onTap: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const ProfileScreen())),
+            borderRadius: BorderRadius.circular(999),
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFF161B22),
+                border: Border.all(color: const Color(0xFF30363D)),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF000000).withValues(alpha: 0.18),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ClipOval(
+                child: user?.avatarUrl != null
+                    ? Image.network(
+                        user!.avatarUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) =>
+                            _ProfileInitial(user: user),
+                      )
+                    : _ProfileInitial(user: user),
+              ),
             ),
           ),
         ],
@@ -95,9 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFF161B22),
-        border: Border(
-          top: BorderSide(color: const Color(0xFF30363D)),
-        ),
+        border: Border(top: BorderSide(color: const Color(0xFF30363D))),
       ),
       child: SafeArea(
         child: BottomNavigationBar(
@@ -122,6 +123,29 @@ class _HomeScreenState extends State<HomeScreen> {
               label: 'Repos',
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileInitial extends StatelessWidget {
+  const _ProfileInitial({required this.user});
+
+  final GitHubUser? user;
+
+  @override
+  Widget build(BuildContext context) {
+    final initial = (user?.login.isNotEmpty == true ? user!.login[0] : '?')
+        .toUpperCase();
+
+    return Center(
+      child: Text(
+        initial,
+        style: const TextStyle(
+          color: Color(0xFFE6EDF3),
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );
@@ -173,10 +197,12 @@ class _ChatTabState extends State<_ChatTab> {
 
     if (!mounted) return;
     setState(() {
-      _messages.add(_ChatMessage(
-        role: _Role.assistant,
-        text: reply ?? groq.lastError ?? 'No response.',
-      ));
+      _messages.add(
+        _ChatMessage(
+          role: _Role.assistant,
+          text: reply ?? groq.lastError ?? 'No response.',
+        ),
+      );
     });
     _scrollToBottom();
   }
@@ -228,8 +254,11 @@ class _ChatTabState extends State<_ChatTab> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.auto_awesome_rounded,
-              size: 48, color: const Color(0xFF30363D)),
+          Icon(
+            Icons.auto_awesome_rounded,
+            size: 48,
+            color: const Color(0xFF30363D),
+          ),
           const SizedBox(height: 16),
           Text(
             'Ask Monday anything',
@@ -249,10 +278,7 @@ class _ChatTabState extends State<_ChatTab> {
       padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
       decoration: BoxDecoration(
         color: const Color(0xFF161B22),
-        border: Border(
-          top: BorderSide(
-              color: const Color(0xFF30363D)),
-        ),
+        border: Border(top: BorderSide(color: const Color(0xFF30363D))),
       ),
       child: Row(
         children: [
@@ -267,8 +293,7 @@ class _ChatTabState extends State<_ChatTab> {
               onSubmitted: (_) => _send(),
               decoration: InputDecoration(
                 hintText: 'Type a message…',
-                hintStyle: TextStyle(
-                    color: const Color(0xFF8B949E)),
+                hintStyle: TextStyle(color: const Color(0xFF8B949E)),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(vertical: 10),
               ),
@@ -292,10 +317,15 @@ class _ChatTabState extends State<_ChatTab> {
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Color(0xFF8B949E)),
+                        strokeWidth: 2,
+                        color: Color(0xFF8B949E),
+                      ),
                     )
-                  : const Icon(Icons.send_rounded,
-                      color: Color(0xFFE6EDF3), size: 18),
+                  : const Icon(
+                      Icons.send_rounded,
+                      color: Color(0xFFE6EDF3),
+                      size: 18,
+                    ),
             ),
           ),
         ],
@@ -333,9 +363,7 @@ class _MessageBubble extends StatelessWidget {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
-            color: isUser
-                ? const Color(0xFF39D353)
-                : const Color(0xFF30363D),
+            color: isUser ? const Color(0xFF39D353) : const Color(0xFF30363D),
             borderRadius: BorderRadius.only(
               topLeft: const Radius.circular(16),
               topRight: const Radius.circular(16),
@@ -346,9 +374,7 @@ class _MessageBubble extends StatelessWidget {
           child: Text(
             msg.text,
             style: TextStyle(
-              color: isUser
-                  ? const Color(0xFFE6EDF3)
-                  : const Color(0xFFE6EDF3),
+              color: isUser ? const Color(0xFFE6EDF3) : const Color(0xFFE6EDF3),
               fontSize: 14,
               height: 1.5,
             ),

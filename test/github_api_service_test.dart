@@ -87,6 +87,64 @@ void main() {
     expect(branch?.sha, 'abc123');
   });
 
+  test('getContributionCalendar parses the viewer calendar', () async {
+    final service = _service(
+      MockClient((request) async {
+        expect(request.method, 'POST');
+        expect(request.url.path, '/graphql');
+
+        final body = jsonDecode(request.body) as Map<String, dynamic>;
+        expect(body['query'] as String, contains('contributionCalendar'));
+        expect(body['query'] as String, contains('weekday'));
+        expect(body.containsKey('variables'), isFalse);
+
+        return http.Response(
+          jsonEncode({
+            'data': {
+              'viewer': {
+                'contributionsCollection': {
+                  'contributionCalendar': {
+                    'totalContributions': 42,
+                    'weeks': [
+                      {
+                        'contributionDays': [
+                          {
+                            'date': '2026-04-13',
+                            'weekday': 1,
+                            'contributionCount': 0,
+                            'contributionLevel': 'NONE',
+                          },
+                          {
+                            'date': '2026-04-14',
+                            'weekday': 2,
+                            'contributionCount': 3,
+                            'contributionLevel': 'SECOND_QUARTILE',
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          }),
+          200,
+          headers: {'content-type': 'application/json'},
+        );
+      }),
+    );
+
+    final calendar = await service.getContributionCalendar();
+
+    expect(calendar, isNotNull);
+    expect(calendar!.totalContributions, 42);
+    expect(calendar.weeks, hasLength(1));
+    expect(calendar.weeks.first, hasLength(2));
+    expect(calendar.weeks.first[1].contributionCount, 3);
+    expect(calendar.activeDays, 1);
+    expect(calendar.activeWeeks, 1);
+  });
+
   test(
     'pushChanges encodes the ref path and surfaces GitHub failures',
     () async {

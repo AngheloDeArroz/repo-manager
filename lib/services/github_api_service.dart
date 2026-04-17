@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../config/app_config.dart';
 import '../models/github_branch.dart';
+import '../models/github_contribution_calendar.dart';
 import '../models/github_commit.dart';
 import '../models/github_repo.dart';
 import '../models/github_tree_entry.dart';
@@ -57,10 +58,8 @@ class GitHubWriteResult {
 
 /// Thin wrapper for authenticated GitHub REST API calls.
 class GitHubApiService {
-  GitHubApiService({
-    required this._getGitHubToken,
-    http.Client? client,
-  }) : _client = client ?? http.Client();
+  GitHubApiService({required this._getGitHubToken, http.Client? client})
+    : _client = client ?? http.Client();
 
   final GitHubTokenGetter _getGitHubToken;
   final http.Client _client;
@@ -153,6 +152,52 @@ class GitHubApiService {
     final res = await _authGet('${AppConfig.githubApiUrl}/user');
     if (res == null || res.statusCode != 200) return null;
     return GitHubUser.fromJson(jsonDecode(res.body));
+  }
+
+  /// Fetch the authenticated user's contribution calendar from GraphQL.
+  Future<GitHubContributionCalendar?> getContributionCalendar() async {
+    const query = '''
+query ViewerContributionCalendar {
+  viewer {
+    contributionsCollection {
+      contributionCalendar {
+        totalContributions
+        weeks {
+          contributionDays {
+            date
+            weekday
+            contributionCount
+            contributionLevel
+          }
+        }
+      }
+    }
+  }
+}
+''';
+
+    final res = await _authPost('${AppConfig.githubApiUrl}/graphql', {
+      'query': query,
+    });
+    if (res == null || res.statusCode != 200) return null;
+
+    try {
+      final decoded = jsonDecode(res.body) as Map<String, dynamic>;
+      final errors = decoded['errors'];
+      if (errors is List && errors.isNotEmpty) return null;
+
+      final data = decoded['data'] as Map<String, dynamic>?;
+      final viewer = data?['viewer'] as Map<String, dynamic>?;
+      final collection =
+          viewer?['contributionsCollection'] as Map<String, dynamic>?;
+      final calendar =
+          collection?['contributionCalendar'] as Map<String, dynamic>?;
+      if (calendar == null) return null;
+
+      return GitHubContributionCalendar.fromJson(calendar);
+    } catch (_) {
+      return null;
+    }
   }
 
   // — Repos ——————————————————————————————————————————————
