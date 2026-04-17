@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../models/api_key_entry.dart';
 
 /// Single point of access for secure key/value storage.
 ///
@@ -9,19 +11,29 @@ class SecureStorageService {
 
   final FlutterSecureStorage _storage;
 
-  static const _groqApiKeyKey = 'groq_api_key';
+  static const _groqApiKeysListKey = 'groq_api_keys_list';
   static const _githubTokenKey = 'github_access_token';
 
   // — Groq ————————————————————————————————————————————
 
-  Future<String?> getApiKey() => _storage.read(key: _groqApiKeyKey);
+  Future<List<ApiKeyEntry>> getApiKeys() async {
+    final str = await _storage.read(key: _groqApiKeysListKey);
+    if (str == null || str.isEmpty) return [];
+    try {
+      final List<dynamic> decoded = jsonDecode(str);
+      return decoded.map((e) => ApiKeyEntry.fromJson(e)).toList();
+    } catch (_) {
+      return [];
+    }
+  }
 
-  Future<void> setApiKey(String value) =>
-      _storage.write(key: _groqApiKeyKey, value: value);
+  Future<void> saveApiKeys(List<ApiKeyEntry> keys) async {
+    final str = jsonEncode(keys.map((e) => e.toJson()).toList());
+    await _storage.write(key: _groqApiKeysListKey, value: str);
+  }
 
-  Future<void> deleteApiKey() => _storage.delete(key: _groqApiKeyKey);
-
-  Future<bool> hasApiKey() async => (await getApiKey()) != null;
+  // Wipe the old single key if present (optional cleanup)
+  Future<void> cleanUpOldKeys() => _storage.delete(key: 'groq_api_key');
 
   // — GitHub (placeholder for Feature 2) ——————————————
 

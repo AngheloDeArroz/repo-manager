@@ -53,27 +53,27 @@ class _RepoListScreenState extends State<RepoListScreen> {
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
+              color: const Color(0xFF30363D),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.06),
+                color: const Color(0xFF30363D),
               ),
             ),
             child: TextField(
               controller: _searchController,
               onChanged: provider.setSearchQuery,
-              style: const TextStyle(color: Colors.white, fontSize: 13.5),
+              style: const TextStyle(color: Color(0xFFE6EDF3), fontSize: 13.5),
               decoration: InputDecoration(
                 hintText: 'Search repositories…',
                 hintStyle:
-                    TextStyle(color: Colors.white.withValues(alpha: 0.25)),
+                    TextStyle(color: const Color(0xFF8B949E)),
                 prefixIcon: Icon(Icons.search_rounded,
-                    size: 18, color: Colors.white.withValues(alpha: 0.3)),
+                    size: 18, color: const Color(0xFF8B949E)),
                 suffixIcon: provider.searchQuery.isNotEmpty
                     ? IconButton(
                         icon: Icon(Icons.close_rounded,
                             size: 16,
-                            color: Colors.white.withValues(alpha: 0.3)),
+                            color: const Color(0xFF8B949E)),
                         onPressed: () {
                           _searchController.clear();
                           provider.setSearchQuery('');
@@ -97,7 +97,7 @@ class _RepoListScreenState extends State<RepoListScreen> {
                   ? '${repos.length} result${repos.length == 1 ? '' : 's'}'
                   : '${provider.repos.length} repositories',
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.3),
+                color: const Color(0xFF8B949E),
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
@@ -125,7 +125,7 @@ class _RepoListScreenState extends State<RepoListScreen> {
     // Initial loading
     if (provider.isLoadingRepos && repos.isEmpty) {
       return const Center(
-        child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
+        child: CircularProgressIndicator(color: Color(0xFF39D353)),
       );
     }
 
@@ -136,14 +136,14 @@ class _RepoListScreenState extends State<RepoListScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.inbox_rounded,
-                size: 48, color: Colors.white.withValues(alpha: 0.1)),
+                size: 48, color: const Color(0xFF30363D)),
             const SizedBox(height: 12),
             Text(
               provider.searchQuery.isNotEmpty
                   ? 'No repos match your search'
                   : 'No repositories found',
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.3),
+                color: const Color(0xFF8B949E),
                 fontSize: 14,
               ),
             ),
@@ -154,8 +154,8 @@ class _RepoListScreenState extends State<RepoListScreen> {
 
     return RefreshIndicator(
       onRefresh: provider.loadRepos,
-      color: const Color(0xFF7C3AED),
-      backgroundColor: const Color(0xFF1E1E2E),
+      color: const Color(0xFF39D353),
+      backgroundColor: const Color(0xFF161B22),
       child: ListView.builder(
         controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
@@ -170,7 +170,7 @@ class _RepoListScreenState extends State<RepoListScreen> {
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Color(0xFF7C3AED)),
+                      strokeWidth: 2, color: Color(0xFF39D353)),
                 ),
               ),
             );
@@ -210,13 +210,13 @@ class _ErrorState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.error_outline_rounded,
-                size: 40, color: Colors.white.withValues(alpha: 0.15)),
+                size: 40, color: const Color(0xFF30363D)),
             const SizedBox(height: 12),
             Text(
               message,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.4),
+                color: const Color(0xFF8B949E),
                 fontSize: 13,
               ),
             ),
@@ -226,7 +226,7 @@ class _ErrorState extends StatelessWidget {
               icon: const Icon(Icons.refresh_rounded, size: 16),
               label: const Text('Retry'),
               style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF7C3AED),
+                foregroundColor: const Color(0xFF39D353),
               ),
             ),
           ],

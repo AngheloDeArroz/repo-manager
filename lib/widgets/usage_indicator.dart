@@ -42,10 +42,10 @@ class UsageIndicator extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E1E2E),
+          color: const Color(0xFF161B22),
           border: Border(
             top: BorderSide(
-                color: Colors.white.withValues(alpha: 0.06)),
+                color: const Color(0xFF30363D)),
           ),
         ),
         child: Row(
@@ -67,7 +67,7 @@ class UsageIndicator extends StatelessWidget {
 
             const SizedBox(width: 10),
             Icon(Icons.chevron_right_rounded,
-                color: Colors.white.withValues(alpha: 0.3), size: 20),
+                color: const Color(0xFF8B949E), size: 20),
           ],
         ),
       ),
@@ -149,7 +149,7 @@ class _MiniBar extends StatelessWidget {
           style: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.w600,
-            color: Colors.white.withValues(alpha: 0.5),
+            color: const Color(0xFF8B949E),
             letterSpacing: 0.8,
           ),
         ),
@@ -159,7 +159,7 @@ class _MiniBar extends StatelessWidget {
           child: LinearProgressIndicator(
             value: ratio,
             minHeight: 3,
-            backgroundColor: Colors.white.withValues(alpha: 0.08),
+            backgroundColor: const Color(0xFF30363D),
             valueColor: AlwaysStoppedAnimation(color),
           ),
         ),

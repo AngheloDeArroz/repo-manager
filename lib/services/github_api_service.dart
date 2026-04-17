@@ -58,10 +58,9 @@ class GitHubWriteResult {
 /// Thin wrapper for authenticated GitHub REST API calls.
 class GitHubApiService {
   GitHubApiService({
-    required GitHubTokenGetter getGitHubToken,
+    required this._getGitHubToken,
     http.Client? client,
-  }) : _getGitHubToken = getGitHubToken,
-       _client = client ?? http.Client();
+  }) : _client = client ?? http.Client();
 
   final GitHubTokenGetter _getGitHubToken;
   final http.Client _client;
