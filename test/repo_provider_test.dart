@@ -7,8 +7,8 @@ import 'package:monday/services/github_api_service.dart';
 import 'package:monday/services/repo_provider.dart';
 
 class _FakeGitHubApiService extends GitHubApiService {
-  _FakeGitHubApiService({required this.branches, this.treeEntries = const []})
-    : super(getGitHubToken: () async => 'token');
+  _FakeGitHubApiService({required this.branches})
+    : treeEntries = const [], super(getGitHubToken: () async => 'token');
 
   final List<GitHubBranch> branches;
   final List<GitHubTreeEntry> treeEntries;

@@ -12,10 +12,11 @@ class LoginScreen extends StatelessWidget {
     final auth = context.watch<GitHubAuthService>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 36),
+      backgroundColor: const Color(0xFF0D1117),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 36),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -26,13 +27,13 @@ class LoginScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF7C3AED), Color(0xFF2563EB)],
+                    colors: [Color(0xFF39D353), Color(0xFF26A641)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
+                      color: const Color(0xFF39D353).withValues(alpha: 0.3),
                       blurRadius: 28,
                       offset: const Offset(0, 10),
                     ),
@@ -42,7 +43,7 @@ class LoginScreen extends StatelessWidget {
                   child: Text(
                     'M',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFFE6EDF3),
                       fontSize: 36,
                       fontWeight: FontWeight.w800,
                     ),
@@ -55,7 +56,7 @@ class LoginScreen extends StatelessWidget {
               const Text(
                 'Monday',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFFE6EDF3),
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
                   letterSpacing: -1,
@@ -65,7 +66,7 @@ class LoginScreen extends StatelessWidget {
               Text(
                 'AI-powered GitHub assistant',
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.45),
+                  color: const Color(0xFF8B949E),
                   fontSize: 15,
                 ),
               ),
@@ -82,7 +83,7 @@ class LoginScreen extends StatelessWidget {
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white),
+                              strokeWidth: 2, color: Color(0xFFE6EDF3)),
                         )
                       : const Icon(Icons.code_rounded, size: 22),
                   label: Text(
@@ -94,7 +95,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF24292F),
-                    foregroundColor: Colors.white,
+                    foregroundColor: const Color(0xFFE6EDF3),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
@@ -141,12 +142,13 @@ class LoginScreen extends StatelessWidget {
                 'Your code stays on GitHub.\nWe only request repo & read:user scopes.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.25),
+                  color: const Color(0xFF8B949E),
                   fontSize: 12,
                   height: 1.6,
                 ),
               ),
             ],
+          ),
           ),
         ),
       ),

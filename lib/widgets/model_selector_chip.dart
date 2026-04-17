@@ -34,13 +34,13 @@ class ModelSelectorChip extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
                 color: isActive
-                    ? const Color(0xFF7C3AED)
-                    : Colors.white.withValues(alpha: 0.06),
+                    ? const Color(0xFF39D353)
+                    : const Color(0xFF30363D),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isActive
-                      ? const Color(0xFF7C3AED)
-                      : Colors.white.withValues(alpha: 0.1),
+                      ? const Color(0xFF39D353)
+                      : const Color(0xFF30363D),
                 ),
               ),
               child: Row(
@@ -52,8 +52,8 @@ class ModelSelectorChip extends StatelessWidget {
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: isActive
-                          ? Colors.white
-                          : Colors.white.withValues(alpha: 0.6),
+                          ? const Color(0xFFE6EDF3)
+                          : const Color(0xFF8B949E),
                     ),
                   ),
                   if (isActive) ...[
@@ -62,7 +62,7 @@ class ModelSelectorChip extends StatelessWidget {
                       model.modelId.split('/').last,
                       style: TextStyle(
                         fontSize: 10,
-                        color: Colors.white.withValues(alpha: 0.45),
+                        color: const Color(0xFF8B949E),
                       ),
                     ),
                   ],

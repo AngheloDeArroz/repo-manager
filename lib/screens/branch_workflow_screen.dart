@@ -7,6 +7,7 @@ import '../services/api_key_manager.dart';
 import '../services/groq_service.dart';
 import '../services/model_provider.dart';
 import '../services/repo_provider.dart';
+import '../widgets/model_picker_button.dart';
 import '../widgets/needs_api_key_prompt.dart';
 
 /// Branch workflow UI — the approve / reject / revise gate.
@@ -318,12 +319,12 @@ Rules:
     final provider = context.watch<RepoProvider>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
+      backgroundColor: const Color(0xFF0D1117),
       body: SafeArea(
         child: Column(
           children: [
             _buildAppBar(context, provider),
-            Divider(height: 1, color: Colors.white.withValues(alpha: 0.06)),
+            Divider(height: 1, color: const Color(0xFF30363D)),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
@@ -366,7 +367,7 @@ Rules:
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(
               Icons.arrow_back_rounded,
-              color: Colors.white,
+              color: Color(0xFFE6EDF3),
               size: 22,
             ),
           ),
@@ -375,7 +376,7 @@ Rules:
             child: Text(
               'Branch Workflow',
               style: TextStyle(
-                color: Colors.white,
+                color: Color(0xFFE6EDF3),
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -0.3,
@@ -386,10 +387,10 @@ Rules:
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
+                color: const Color(0xFF39D353).withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(
-                  color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+                  color: const Color(0xFF39D353).withValues(alpha: 0.2),
                 ),
               ),
               child: Row(
@@ -398,13 +399,13 @@ Rules:
                   const Icon(
                     Icons.call_split_rounded,
                     size: 12,
-                    color: Color(0xFF7C3AED),
+                    color: Color(0xFF39D353),
                   ),
                   const SizedBox(width: 4),
                   Text(
                     provider.selectedBranch!.name,
                     style: const TextStyle(
-                      color: Color(0xFF7C3AED),
+                      color: Color(0xFF39D353),
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
@@ -426,29 +427,35 @@ Rules:
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Describe your task',
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.6),
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Describe your task',
+              style: TextStyle(
+                color: const Color(0xFF8B949E),
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const ModelPickerButton(),
+          ],
         ),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF1E1E2E),
+            color: const Color(0xFF161B22),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+            border: Border.all(color: const Color(0xFF30363D)),
           ),
           child: TextField(
             controller: _taskController,
             maxLines: 4,
             minLines: 3,
-            style: const TextStyle(color: Colors.white, fontSize: 13.5),
+            style: const TextStyle(color: Color(0xFFE6EDF3), fontSize: 13.5),
             decoration: InputDecoration(
               hintText: 'e.g. "Add a loading spinner to the login screen"',
-              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.2)),
+              hintStyle: TextStyle(color: const Color(0xFF8B949E)),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.all(14),
             ),
@@ -466,7 +473,7 @@ Rules:
                     height: 16,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Colors.white70,
+                      color: Color(0xFF8B949E),
                     ),
                   )
                 : const Icon(Icons.auto_awesome_rounded, size: 18),
@@ -478,12 +485,12 @@ Rules:
               ),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF7C3AED),
-              foregroundColor: Colors.white,
+              backgroundColor: const Color(0xFF39D353),
+              foregroundColor: const Color(0xFFE6EDF3),
               disabledBackgroundColor: const Color(
-                0xFF7C3AED,
+                0xFF39D353,
               ).withValues(alpha: 0.5),
-              disabledForegroundColor: Colors.white70,
+              disabledForegroundColor: const Color(0xFF8B949E),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -538,10 +545,10 @@ Rules:
         width: double.infinity,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color(0xFF22C55E).withValues(alpha: 0.1),
+          color: const Color(0xFF39D353).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: const Color(0xFF22C55E).withValues(alpha: 0.2),
+            color: const Color(0xFF39D353).withValues(alpha: 0.2),
           ),
         ),
         child: Row(
@@ -549,14 +556,14 @@ Rules:
             const Icon(
               Icons.check_circle_rounded,
               size: 16,
-              color: Color(0xFF22C55E),
+              color: Color(0xFF39D353),
             ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 _successMessage!,
                 style: TextStyle(
-                  color: const Color(0xFF22C55E).withValues(alpha: 0.9),
+                  color: const Color(0xFF39D353).withValues(alpha: 0.9),
                   fontSize: 12.5,
                   fontWeight: FontWeight.w600,
                 ),
@@ -573,9 +580,9 @@ Rules:
 
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E2E),
+        color: const Color(0xFF161B22),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+        border: Border.all(color: const Color(0xFF30363D)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -585,7 +592,7 @@ Rules:
             width: double.infinity,
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: const Color(0xFF7C3AED).withValues(alpha: 0.06),
+              color: const Color(0xFF39D353).withValues(alpha: 0.06),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(14),
               ),
@@ -599,14 +606,14 @@ Rules:
                   ),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF7C3AED), Color(0xFF2563EB)],
+                      colors: [Color(0xFF39D353), Color(0xFF26A641)],
                     ),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Text(
                     'PROPOSAL',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFFE6EDF3),
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
@@ -629,7 +636,7 @@ Rules:
                   icon: Icons.call_split_rounded,
                   label: 'Branch',
                   value: p.branchName,
-                  valueColor: const Color(0xFF7C3AED),
+                  valueColor: const Color(0xFF39D353),
                 ),
                 const SizedBox(height: 10),
 
@@ -655,7 +662,7 @@ Rules:
                 Text(
                   'Affected files (${p.files.length})',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.4),
+                    color: const Color(0xFF8B949E),
                     fontSize: 11.5,
                     fontWeight: FontWeight.w600,
                   ),
@@ -743,7 +750,7 @@ Rules:
                       height: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white70,
+                        color: Color(0xFF8B949E),
                       ),
                     )
                   : const Icon(Icons.check_rounded, size: 18),
@@ -755,12 +762,12 @@ Rules:
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF22C55E),
-                foregroundColor: Colors.white,
+                backgroundColor: const Color(0xFF39D353),
+                foregroundColor: const Color(0xFFE6EDF3),
                 disabledBackgroundColor: const Color(
-                  0xFF22C55E,
+                  0xFF39D353,
                 ).withValues(alpha: 0.5),
-                disabledForegroundColor: Colors.white70,
+                disabledForegroundColor: const Color(0xFF8B949E),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -794,14 +801,14 @@ class _ProposalRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 14, color: Colors.white.withValues(alpha: 0.3)),
+        Icon(icon, size: 14, color: const Color(0xFF8B949E)),
         const SizedBox(width: 8),
         SizedBox(
           width: 50,
           child: Text(
             label,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.35),
+              color: const Color(0xFF8B949E),
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -811,7 +818,7 @@ class _ProposalRow extends StatelessWidget {
           child: Text(
             value,
             style: TextStyle(
-              color: valueColor ?? Colors.white.withValues(alpha: 0.8),
+              color: valueColor ?? const Color(0xFFE6EDF3),
               fontSize: 12.5,
               fontWeight: FontWeight.w500,
               fontFamily: valueColor != null ? 'monospace' : null,
@@ -836,7 +843,7 @@ class _FileChangeTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.03),
+          color: const Color(0xFF30363D),
           borderRadius: BorderRadius.circular(6),
         ),
         child: Row(
@@ -847,7 +854,7 @@ class _FileChangeTile extends StatelessWidget {
               child: Text(
                 file.path,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: const Color(0xFF8B949E),
                   fontSize: 12,
                   fontFamily: 'monospace',
                 ),
@@ -858,7 +865,7 @@ class _FileChangeTile extends StatelessWidget {
             Text(
               '+${file.additions}',
               style: const TextStyle(
-                color: Color(0xFF22C55E),
+                color: Color(0xFF39D353),
                 fontSize: 10.5,
                 fontFamily: 'monospace',
               ),
@@ -880,7 +887,7 @@ class _FileChangeTile extends StatelessWidget {
 
   Widget _actionBadge() {
     final (label, color) = switch (file.action) {
-      FileAction.create => ('A', const Color(0xFF22C55E)),
+      FileAction.create => ('A', const Color(0xFF39D353)),
       FileAction.modify => ('M', const Color(0xFFFBBF24)),
       FileAction.delete => ('D', const Color(0xFFEF4444)),
     };
@@ -915,12 +922,12 @@ class _StatusPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (label, color) = switch (status) {
-      ProposedChangeStatus.pending => ('Pending Review', Colors.white54),
-      ProposedChangeStatus.approved => ('Approved', const Color(0xFF22C55E)),
+      ProposedChangeStatus.pending => ('Pending Review', const Color(0xFF8B949E)),
+      ProposedChangeStatus.approved => ('Approved', const Color(0xFF39D353)),
       ProposedChangeStatus.rejected => ('Rejected', const Color(0xFFEF4444)),
       ProposedChangeStatus.revising => ('Revising', const Color(0xFFFBBF24)),
       ProposedChangeStatus.pushing => ('Pushing…', const Color(0xFF3B82F6)),
-      ProposedChangeStatus.pushed => ('Pushed ✓', const Color(0xFF22C55E)),
+      ProposedChangeStatus.pushed => ('Pushed ✓', const Color(0xFF39D353)),
       ProposedChangeStatus.failed => ('Failed', const Color(0xFFEF4444)),
     };
 

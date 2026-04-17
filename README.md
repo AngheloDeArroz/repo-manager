@@ -114,6 +114,8 @@ Security:
   refactor/description
   perf/description
   chore/description
+- Generated branch names are normalized to lowercase `type/description` before publish.
+- If a branch already exists on GitHub at the same base commit, Monday reuses it instead of failing.
 - No AI/bot/assistant naming in branches
 - Every push requires explicit approval
 

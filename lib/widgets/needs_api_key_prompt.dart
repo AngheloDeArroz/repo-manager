@@ -50,7 +50,7 @@ class NeedsApiKeyPrompt extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFEF4444),
-              foregroundColor: Colors.white,
+              foregroundColor: const Color(0xFFE6EDF3),
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

@@ -135,12 +135,12 @@ Be brief and technical. Use markdown formatting.''',
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
+      backgroundColor: const Color(0xFF0D1117),
       body: SafeArea(
         child: Column(
           children: [
             _buildAppBar(),
-            Divider(height: 1, color: Colors.white.withValues(alpha: 0.06)),
+            Divider(height: 1, color: const Color(0xFF30363D)),
             Expanded(child: _buildBody()),
           ],
         ),
@@ -160,7 +160,7 @@ Be brief and technical. Use markdown formatting.''',
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.arrow_back_rounded,
-                color: Colors.white, size: 22),
+                color: Color(0xFFE6EDF3), size: 22),
           ),
           const SizedBox(width: 4),
           Expanded(
@@ -170,7 +170,7 @@ Be brief and technical. Use markdown formatting.''',
                 Text(
                   widget.entry.path,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFFE6EDF3),
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     letterSpacing: -0.3,
@@ -182,7 +182,7 @@ Be brief and technical. Use markdown formatting.''',
                   Text(
                     ext.toUpperCase(),
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.3),
+                      color: const Color(0xFF8B949E),
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.5,
@@ -199,7 +199,7 @@ Be brief and technical. Use markdown formatting.''',
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: const Text('Copied to clipboard'),
-                    backgroundColor: const Color(0xFF1E1E2E),
+                    backgroundColor: const Color(0xFF161B22),
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8)),
@@ -208,7 +208,7 @@ Be brief and technical. Use markdown formatting.''',
                 );
               },
               icon: Icon(Icons.copy_rounded,
-                  size: 18, color: Colors.white.withValues(alpha: 0.4)),
+                  size: 18, color: const Color(0xFF8B949E)),
             ),
         ],
       ),
@@ -218,7 +218,7 @@ Be brief and technical. Use markdown formatting.''',
   Widget _buildBody() {
     if (_isLoadingFile) {
       return const Center(
-        child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
+        child: CircularProgressIndicator(color: Color(0xFF39D353)),
       );
     }
 
@@ -230,13 +230,13 @@ Be brief and technical. Use markdown formatting.''',
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.error_outline_rounded,
-                  size: 40, color: Colors.white.withValues(alpha: 0.15)),
+                  size: 40, color: const Color(0xFF30363D)),
               const SizedBox(height: 12),
               Text(
                 _fileError!,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4),
+                  color: const Color(0xFF8B949E),
                   fontSize: 13,
                 ),
               ),
@@ -246,7 +246,7 @@ Be brief and technical. Use markdown formatting.''',
                 icon: const Icon(Icons.refresh_rounded, size: 16),
                 label: const Text('Retry'),
                 style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFF7C3AED),
+                  foregroundColor: const Color(0xFF39D353),
                 ),
               ),
             ],
@@ -297,7 +297,7 @@ Be brief and technical. Use markdown formatting.''',
                             '${i + 1}',
                             textAlign: TextAlign.right,
                             style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.15),
+                              color: const Color(0xFF30363D),
                               fontSize: 12,
                               fontFamily: 'monospace',
                               height: 1.6,
@@ -311,7 +311,7 @@ Be brief and technical. Use markdown formatting.''',
                         child: Text(
                           lines[i].isEmpty ? ' ' : lines[i],
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.8),
+                            color: const Color(0xFFE6EDF3),
                             fontSize: 12,
                             fontFamily: 'monospace',
                             height: 1.6,
@@ -334,9 +334,9 @@ Be brief and technical. Use markdown formatting.''',
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E2E),
+        color: const Color(0xFF161B22),
         border: Border(
-          top: BorderSide(color: Colors.white.withValues(alpha: 0.06)),
+          top: BorderSide(color: const Color(0xFF30363D)),
         ),
       ),
       child: Column(
@@ -356,7 +356,7 @@ Be brief and technical. Use markdown formatting.''',
                           width: 16,
                           height: 16,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white70),
+                              strokeWidth: 2, color: Color(0xFF8B949E)),
                         )
                       : const Icon(Icons.auto_awesome_rounded, size: 18),
                   label: Text(
@@ -367,11 +367,11 @@ Be brief and technical. Use markdown formatting.''',
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7C3AED),
-                    foregroundColor: Colors.white,
+                    backgroundColor: const Color(0xFF39D353),
+                    foregroundColor: const Color(0xFFE6EDF3),
                     disabledBackgroundColor:
-                        const Color(0xFF7C3AED).withValues(alpha: 0.5),
-                    disabledForegroundColor: Colors.white70,
+                        const Color(0xFF39D353).withValues(alpha: 0.5),
+                    disabledForegroundColor: const Color(0xFF8B949E),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -409,7 +409,7 @@ Be brief and technical. Use markdown formatting.''',
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF7C3AED), Color(0xFF2563EB)],
+                      colors: [Color(0xFF39D353), Color(0xFF26A641)],
                     ),
                     borderRadius: BorderRadius.circular(6),
                   ),
@@ -417,12 +417,12 @@ Be brief and technical. Use markdown formatting.''',
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.auto_awesome_rounded,
-                          size: 12, color: Colors.white),
+                          size: 12, color: Color(0xFFE6EDF3)),
                       SizedBox(width: 4),
                       Text(
                         'AI Explanation',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFFE6EDF3),
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                         ),
@@ -437,7 +437,7 @@ Be brief and technical. Use markdown formatting.''',
                     onPressed: _isExplaining ? null : _explain,
                     icon: Icon(Icons.refresh_rounded,
                         size: 16,
-                        color: Colors.white.withValues(alpha: 0.3)),
+                        color: const Color(0xFF8B949E)),
                     tooltip: 'Re-explain',
                   ),
                   // Close button
@@ -445,7 +445,7 @@ Be brief and technical. Use markdown formatting.''',
                     onPressed: () => setState(() => _explanation = null),
                     icon: Icon(Icons.close_rounded,
                         size: 16,
-                        color: Colors.white.withValues(alpha: 0.3)),
+                        color: const Color(0xFF8B949E)),
                     tooltip: 'Dismiss',
                   ),
                 ],
@@ -465,13 +465,13 @@ Be brief and technical. Use markdown formatting.''',
                       width: 24,
                       height: 24,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Color(0xFF7C3AED)),
+                          strokeWidth: 2, color: Color(0xFF39D353)),
                     ),
                     SizedBox(height: 12),
                     Text(
                       'Reading the code…',
                       style: TextStyle(
-                        color: Colors.white54,
+                        color: Color(0xFF8B949E),
                         fontSize: 12,
                       ),
                     ),
@@ -491,7 +491,7 @@ Be brief and technical. Use markdown formatting.''',
                     child: Text(
                       _explanation!,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.75),
+                        color: const Color(0xFF8B949E),
                         fontSize: 13,
                         height: 1.6,
                       ),

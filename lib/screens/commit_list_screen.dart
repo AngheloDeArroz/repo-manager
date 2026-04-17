@@ -112,12 +112,12 @@ class _CommitListScreenState extends State<CommitListScreen> {
     final provider = context.watch<RepoProvider>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
+      backgroundColor: const Color(0xFF0D1117),
       body: SafeArea(
         child: Column(
           children: [
             _buildAppBar(context, provider),
-            Divider(height: 1, color: Colors.white.withValues(alpha: 0.06)),
+            Divider(height: 1, color: const Color(0xFF30363D)),
             Expanded(child: _buildBody()),
           ],
         ),
@@ -133,7 +133,7 @@ class _CommitListScreenState extends State<CommitListScreen> {
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.arrow_back_rounded,
-                color: Colors.white, size: 22),
+                color: Color(0xFFE6EDF3), size: 22),
           ),
           const SizedBox(width: 4),
           Expanded(
@@ -143,7 +143,7 @@ class _CommitListScreenState extends State<CommitListScreen> {
                 const Text(
                   'Commits',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFFE6EDF3),
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.3,
@@ -154,12 +154,12 @@ class _CommitListScreenState extends State<CommitListScreen> {
                     children: [
                       Icon(Icons.call_split_rounded,
                           size: 11,
-                          color: const Color(0xFF7C3AED).withValues(alpha: 0.7)),
+                          color: const Color(0xFF39D353).withValues(alpha: 0.7)),
                       const SizedBox(width: 4),
                       Text(
                         provider.selectedBranch!.name,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.35),
+                          color: const Color(0xFF8B949E),
                           fontSize: 12,
                         ),
                       ),
@@ -171,7 +171,7 @@ class _CommitListScreenState extends State<CommitListScreen> {
           Text(
             '${_commits.length} commits',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.25),
+              color: const Color(0xFF8B949E),
               fontSize: 11.5,
             ),
           ),
@@ -187,13 +187,13 @@ class _CommitListScreenState extends State<CommitListScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.error_outline_rounded,
-                size: 40, color: Colors.white.withValues(alpha: 0.15)),
+                size: 40, color: const Color(0xFF30363D)),
             const SizedBox(height: 12),
             Text(
               _error!,
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 13),
+                  color: const Color(0xFF8B949E), fontSize: 13),
             ),
             const SizedBox(height: 16),
             TextButton.icon(
@@ -201,7 +201,7 @@ class _CommitListScreenState extends State<CommitListScreen> {
               icon: const Icon(Icons.refresh_rounded, size: 16),
               label: const Text('Retry'),
               style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFF7C3AED)),
+                  foregroundColor: const Color(0xFF39D353)),
             ),
           ],
         ),
@@ -210,7 +210,7 @@ class _CommitListScreenState extends State<CommitListScreen> {
 
     if (_isLoading && _commits.isEmpty) {
       return const Center(
-        child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
+        child: CircularProgressIndicator(color: Color(0xFF39D353)),
       );
     }
 
@@ -219,15 +219,15 @@ class _CommitListScreenState extends State<CommitListScreen> {
         child: Text(
           'No commits found',
           style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.3), fontSize: 14),
+              color: const Color(0xFF8B949E), fontSize: 14),
         ),
       );
     }
 
     return RefreshIndicator(
       onRefresh: _loadCommits,
-      color: const Color(0xFF7C3AED),
-      backgroundColor: const Color(0xFF1E1E2E),
+      color: const Color(0xFF39D353),
+      backgroundColor: const Color(0xFF161B22),
       child: ListView.separated(
         controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
@@ -236,7 +236,7 @@ class _CommitListScreenState extends State<CommitListScreen> {
         separatorBuilder: (_, _) => Divider(
           height: 1,
           indent: 60,
-          color: Colors.white.withValues(alpha: 0.04),
+          color: const Color(0xFF30363D),
         ),
         itemBuilder: (_, i) {
           if (i >= _commits.length) {
@@ -247,7 +247,7 @@ class _CommitListScreenState extends State<CommitListScreen> {
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Color(0xFF7C3AED)),
+                      strokeWidth: 2, color: Color(0xFF39D353)),
                 ),
               ),
             );
@@ -277,7 +277,7 @@ class _CommitTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      splashColor: const Color(0xFF7C3AED).withValues(alpha: 0.06),
+      splashColor: const Color(0xFF39D353).withValues(alpha: 0.06),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
@@ -286,14 +286,14 @@ class _CommitTile extends StatelessWidget {
             // Avatar
             CircleAvatar(
               radius: 16,
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
+              backgroundColor: const Color(0xFF30363D),
               backgroundImage: commit.authorAvatarUrl != null
                   ? NetworkImage(commit.authorAvatarUrl!)
                   : null,
               child: commit.authorAvatarUrl == null
                   ? Icon(Icons.person_rounded,
                       size: 16,
-                      color: Colors.white.withValues(alpha: 0.3))
+                      color: const Color(0xFF8B949E))
                   : null,
             ),
             const SizedBox(width: 12),
@@ -306,7 +306,7 @@ class _CommitTile extends StatelessWidget {
                   Text(
                     commit.title,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFFE6EDF3),
                       fontSize: 13.5,
                       fontWeight: FontWeight.w500,
                       height: 1.3,
@@ -322,13 +322,13 @@ class _CommitTile extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.06),
+                          color: const Color(0xFF30363D),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           commit.shortSha,
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.4),
+                            color: const Color(0xFF8B949E),
                             fontSize: 11,
                             fontFamily: 'monospace',
                             fontWeight: FontWeight.w500,
@@ -339,7 +339,7 @@ class _CommitTile extends StatelessWidget {
                       Text(
                         commit.authorLogin ?? commit.authorName,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.3),
+                          color: const Color(0xFF8B949E),
                           fontSize: 11.5,
                         ),
                       ),
@@ -347,7 +347,7 @@ class _CommitTile extends StatelessWidget {
                       Text(
                         _relativeTime(commit.date),
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.2),
+                          color: const Color(0xFF8B949E),
                           fontSize: 11,
                         ),
                       ),
@@ -361,7 +361,7 @@ class _CommitTile extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 8, top: 4),
               child: Icon(Icons.chevron_right_rounded,
-                  size: 18, color: Colors.white.withValues(alpha: 0.15)),
+                  size: 18, color: const Color(0xFF30363D)),
             ),
           ],
         ),

@@ -18,13 +18,13 @@ class RepoCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(14),
-          splashColor: const Color(0xFF7C3AED).withValues(alpha: 0.08),
+          splashColor: const Color(0xFF39D353).withValues(alpha: 0.08),
           child: Ink(
             decoration: BoxDecoration(
-              color: const Color(0xFF1E1E2E),
+              color: const Color(0xFF161B22),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.06),
+                color: const Color(0xFF30363D),
               ),
             ),
             padding: const EdgeInsets.all(14),
@@ -41,14 +41,14 @@ class RepoCard extends StatelessWidget {
                       size: 16,
                       color: repo.isPrivate
                           ? const Color(0xFFFBBF24)
-                          : const Color(0xFF7C3AED),
+                          : const Color(0xFF39D353),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         repo.name,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFFE6EDF3),
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.3,
@@ -85,7 +85,7 @@ class RepoCard extends StatelessWidget {
                   Text(
                     repo.description!,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.45),
+                      color: const Color(0xFF8B949E),
                       fontSize: 12.5,
                       height: 1.35,
                     ),
@@ -105,7 +105,7 @@ class RepoCard extends StatelessWidget {
                       Text(
                         repo.language!,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.4),
+                          color: const Color(0xFF8B949E),
                           fontSize: 11.5,
                         ),
                       ),
@@ -113,12 +113,12 @@ class RepoCard extends StatelessWidget {
                     ],
                     Icon(Icons.star_rounded,
                         size: 14,
-                        color: Colors.white.withValues(alpha: 0.3)),
+                        color: const Color(0xFF8B949E)),
                     const SizedBox(width: 3),
                     Text(
                       '${repo.starCount}',
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.4),
+                        color: const Color(0xFF8B949E),
                         fontSize: 11.5,
                       ),
                     ),
@@ -126,7 +126,7 @@ class RepoCard extends StatelessWidget {
                     Text(
                       _relativeTime(repo.updatedAt),
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.25),
+                        color: const Color(0xFF8B949E),
                         fontSize: 11,
                       ),
                     ),

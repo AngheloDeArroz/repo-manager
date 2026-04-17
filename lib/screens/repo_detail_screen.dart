@@ -20,7 +20,7 @@ class RepoDetailScreen extends StatelessWidget {
 
     if (repo == null) {
       return const Scaffold(
-        backgroundColor: Color(0xFF0F0F1A),
+        backgroundColor: Color(0xFF0D1117),
         body: Center(child: Text('No repo selected')),
       );
     }
@@ -33,7 +33,7 @@ class RepoDetailScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF0F0F1A),
+        backgroundColor: const Color(0xFF0D1117),
         body: SafeArea(
           child: Column(
             children: [
@@ -71,7 +71,7 @@ class RepoDetailScreen extends StatelessWidget {
                 _Breadcrumbs(provider: provider),
 
               // — Divider —————————————————————————————————
-              Divider(height: 1, color: Colors.white.withValues(alpha: 0.06)),
+              Divider(height: 1, color: const Color(0xFF30363D)),
 
               // — Tree ————————————————————————————————————
               Expanded(child: _buildTree(provider)),
@@ -97,7 +97,7 @@ class RepoDetailScreen extends StatelessWidget {
             },
             icon: const Icon(
               Icons.arrow_back_rounded,
-              color: Colors.white,
+              color: Color(0xFFE6EDF3),
               size: 22,
             ),
           ),
@@ -109,7 +109,7 @@ class RepoDetailScreen extends StatelessWidget {
                 Text(
                   provider.selectedRepo!.name,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFFE6EDF3),
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.3,
@@ -120,7 +120,7 @@ class RepoDetailScreen extends StatelessWidget {
                 Text(
                   provider.selectedRepo!.owner,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.35),
+                    color: const Color(0xFF8B949E),
                     fontSize: 12,
                   ),
                 ),
@@ -134,7 +134,7 @@ class RepoDetailScreen extends StatelessWidget {
             ).push(MaterialPageRoute(builder: (_) => const CommitListScreen())),
             icon: Icon(
               Icons.history_rounded,
-              color: Colors.white.withValues(alpha: 0.4),
+              color: const Color(0xFF8B949E),
               size: 20,
             ),
             tooltip: 'Commits',
@@ -151,7 +151,7 @@ class RepoDetailScreen extends StatelessWidget {
                 : null,
             icon: Icon(
               Icons.rocket_launch_rounded,
-              color: Colors.white.withValues(alpha: 0.4),
+              color: const Color(0xFF8B949E),
               size: 20,
             ),
             tooltip: provider.branchError ?? 'Branch Workflow',
@@ -187,7 +187,7 @@ class RepoDetailScreen extends StatelessWidget {
   Widget _buildTree(RepoProvider provider) {
     if (provider.isLoadingTree) {
       return const Center(
-        child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
+        child: CircularProgressIndicator(color: Color(0xFF39D353)),
       );
     }
 
@@ -199,14 +199,14 @@ class RepoDetailScreen extends StatelessWidget {
             Icon(
               Icons.error_outline_rounded,
               size: 36,
-              color: Colors.white.withValues(alpha: 0.15),
+              color: const Color(0xFF30363D),
             ),
             const SizedBox(height: 10),
             Text(
               provider.treeError!,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.4),
+                color: const Color(0xFF8B949E),
                 fontSize: 13,
               ),
             ),
@@ -216,7 +216,7 @@ class RepoDetailScreen extends StatelessWidget {
               icon: const Icon(Icons.refresh_rounded, size: 16),
               label: const Text('Retry'),
               style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF7C3AED),
+                foregroundColor: const Color(0xFF39D353),
               ),
             ),
           ],
@@ -230,7 +230,7 @@ class RepoDetailScreen extends StatelessWidget {
         child: Text(
           'Empty directory',
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.3),
+            color: const Color(0xFF8B949E),
             fontSize: 14,
           ),
         ),
@@ -243,7 +243,7 @@ class RepoDetailScreen extends StatelessWidget {
       separatorBuilder: (_, _) => Divider(
         height: 1,
         indent: 56,
-        color: Colors.white.withValues(alpha: 0.04),
+        color: const Color(0xFF30363D),
       ),
       itemBuilder: (ctx, i) {
         final entry = tree[i];
@@ -290,10 +290,10 @@ class _BranchSelector extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
+                color: const Color(0xFF39D353).withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+                  color: const Color(0xFF39D353).withValues(alpha: 0.2),
                 ),
               ),
               child: Row(
@@ -302,13 +302,13 @@ class _BranchSelector extends StatelessWidget {
                   const Icon(
                     Icons.call_split_rounded,
                     size: 14,
-                    color: Color(0xFF7C3AED),
+                    color: Color(0xFF39D353),
                   ),
                   const SizedBox(width: 6),
                   Text(
                     provider.selectedBranch?.name ?? '…',
                     style: const TextStyle(
-                      color: Color(0xFF7C3AED),
+                      color: Color(0xFF39D353),
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
                     ),
@@ -317,7 +317,7 @@ class _BranchSelector extends StatelessWidget {
                   Icon(
                     Icons.keyboard_arrow_down_rounded,
                     size: 16,
-                    color: const Color(0xFF7C3AED).withValues(alpha: 0.6),
+                    color: const Color(0xFF39D353).withValues(alpha: 0.6),
                   ),
                 ],
               ),
@@ -327,7 +327,7 @@ class _BranchSelector extends StatelessWidget {
           Text(
             '${provider.currentTree.length} items',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.25),
+              color: const Color(0xFF8B949E),
               fontSize: 11.5,
             ),
           ),
@@ -339,7 +339,7 @@ class _BranchSelector extends StatelessWidget {
   void _showBranchPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1E1E2E),
+      backgroundColor: const Color(0xFF161B22),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -379,7 +379,7 @@ class _BranchSheet extends StatelessWidget {
           width: 36,
           height: 4,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.15),
+            color: const Color(0xFF30363D),
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -390,7 +390,7 @@ class _BranchSheet extends StatelessWidget {
             child: Text(
               'Switch branch',
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.7),
+                color: const Color(0xFF8B949E),
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -412,15 +412,15 @@ class _BranchSheet extends StatelessWidget {
                   Icons.call_split_rounded,
                   size: 16,
                   color: isSelected
-                      ? const Color(0xFF7C3AED)
-                      : Colors.white.withValues(alpha: 0.3),
+                      ? const Color(0xFF39D353)
+                      : const Color(0xFF8B949E),
                 ),
                 title: Text(
                   b.name,
                   style: TextStyle(
                     color: isSelected
-                        ? const Color(0xFF7C3AED)
-                        : Colors.white.withValues(alpha: 0.7),
+                        ? const Color(0xFF39D353)
+                        : const Color(0xFF8B949E),
                     fontSize: 13.5,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                   ),
@@ -429,7 +429,7 @@ class _BranchSheet extends StatelessWidget {
                     ? const Icon(
                         Icons.check_rounded,
                         size: 16,
-                        color: Color(0xFF7C3AED),
+                        color: Color(0xFF39D353),
                       )
                     : null,
                 onTap: () => onSelect(b),
@@ -463,7 +463,7 @@ class _Breadcrumbs extends StatelessWidget {
           child: Icon(
             Icons.chevron_right_rounded,
             size: 14,
-            color: Colors.white.withValues(alpha: 0.15),
+            color: const Color(0xFF30363D),
           ),
         ),
         itemBuilder: (_, i) {
@@ -488,8 +488,8 @@ class _Breadcrumbs extends StatelessWidget {
                 label,
                 style: TextStyle(
                   color: isLast
-                      ? Colors.white.withValues(alpha: 0.7)
-                      : const Color(0xFF7C3AED).withValues(alpha: 0.8),
+                      ? const Color(0xFF8B949E)
+                      : const Color(0xFF39D353).withValues(alpha: 0.8),
                   fontSize: 12,
                   fontWeight: isLast ? FontWeight.w600 : FontWeight.w400,
                 ),

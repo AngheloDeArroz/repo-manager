@@ -27,7 +27,7 @@ class ApiKeyEntry {
     }
     
     final lastFour = value.substring(value.length - 4);
-    return '${prefix}${'*' * 16}$lastFour';
+    return '$prefix${'*' * 16}$lastFour';
   }
 
   ApiKeyEntry copyWith({

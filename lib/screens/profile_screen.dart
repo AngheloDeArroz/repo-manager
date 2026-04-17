@@ -5,6 +5,7 @@ import '../services/github_auth_service.dart';
 import '../services/model_provider.dart';
 import 'model_switcher_screen.dart';
 import 'settings/api_keys_screen.dart';
+import 'usage_screen.dart';
 
 /// Profile screen — shows avatar, username, and sign-out button.
 class ProfileScreen extends StatelessWidget {
@@ -16,17 +17,17 @@ class ProfileScreen extends StatelessWidget {
     final user = auth.user;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
+      backgroundColor: const Color(0xFF0D1117),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
           'Profile',
           style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18),
+              color: Color(0xFFE6EDF3), fontWeight: FontWeight.w700, fontSize: 18),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFFE6EDF3)),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -42,7 +43,7 @@ class ProfileScreen extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF7C3AED).withValues(alpha: 0.25),
+                      color: const Color(0xFF39D353).withValues(alpha: 0.25),
                       blurRadius: 24,
                       offset: const Offset(0, 8),
                     ),
@@ -50,13 +51,13 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 child: CircleAvatar(
                   radius: 48,
-                  backgroundColor: Colors.white.withValues(alpha: 0.1),
+                  backgroundColor: const Color(0xFF30363D),
                   backgroundImage:
                       user != null ? NetworkImage(user.avatarUrl) : null,
                   child: user == null
                       ? Icon(Icons.person_rounded,
                           size: 40,
-                          color: Colors.white.withValues(alpha: 0.3))
+                          color: const Color(0xFF8B949E))
                       : null,
                 ),
               ),
@@ -67,7 +68,7 @@ class ProfileScreen extends StatelessWidget {
                 Text(
                   user!.name!,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFFE6EDF3),
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
                   ),
@@ -78,7 +79,7 @@ class ProfileScreen extends StatelessWidget {
               Text(
                 '@${user?.login ?? '—'}',
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: const Color(0xFF8B949E),
                   fontSize: 15,
                 ),
               ),
@@ -88,7 +89,7 @@ class ProfileScreen extends StatelessWidget {
                 Text(
                   user!.email!,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.35),
+                    color: const Color(0xFF8B949E),
                     fontSize: 13,
                   ),
                 ),
@@ -107,25 +108,64 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   icon: Icon(Icons.key_rounded,
                       size: 18,
-                      color: const Color(0xFF2563EB).withValues(alpha: 0.8)),
+                      color: const Color(0xFF26A641).withValues(alpha: 0.8)),
                   label: Row(
                     children: [
                       const Text(
                         'API Keys',
                         style: TextStyle(
-                          color: Color(0xFF2563EB),
+                          color: Color(0xFF26A641),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const Spacer(),
                       Icon(Icons.chevron_right_rounded,
                           size: 18,
-                          color: Colors.white.withValues(alpha: 0.2)),
+                          color: const Color(0xFF8B949E)),
                     ],
                   ),
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(
-                        color: const Color(0xFF2563EB).withValues(alpha: 0.2)),
+                        color: const Color(0xFF26A641).withValues(alpha: 0.2)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // — API Usage tile —————————————————————————————
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: OutlinedButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (_) => const UsageScreen()),
+                  ),
+                  icon: Icon(Icons.bar_chart_rounded,
+                      size: 18,
+                      color: const Color(0xFFF59E0B).withValues(alpha: 0.8)),
+                  label: Row(
+                    children: [
+                      const Text(
+                        'API Usage & Limits',
+                        style: TextStyle(
+                          color: Color(0xFFF59E0B),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const Spacer(),
+                      Icon(Icons.chevron_right_rounded,
+                          size: 18,
+                          color: const Color(0xFF8B949E)),
+                    ],
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                        color: const Color(0xFFF59E0B).withValues(alpha: 0.2)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -146,13 +186,13 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   icon: Icon(Icons.psychology_rounded,
                       size: 18,
-                      color: const Color(0xFF7C3AED).withValues(alpha: 0.8)),
+                      color: const Color(0xFF39D353).withValues(alpha: 0.8)),
                   label: Row(
                     children: [
                       const Text(
                         'AI Model',
                         style: TextStyle(
-                          color: Color(0xFF7C3AED),
+                          color: Color(0xFF39D353),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -160,19 +200,19 @@ class ProfileScreen extends StatelessWidget {
                       Text(
                         context.watch<ModelProvider>().currentModel.label,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.35),
+                          color: const Color(0xFF8B949E),
                           fontSize: 13,
                         ),
                       ),
                       const SizedBox(width: 4),
                       Icon(Icons.chevron_right_rounded,
                           size: 18,
-                          color: Colors.white.withValues(alpha: 0.2)),
+                          color: const Color(0xFF8B949E)),
                     ],
                   ),
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(
-                        color: const Color(0xFF7C3AED).withValues(alpha: 0.2)),
+                        color: const Color(0xFF39D353).withValues(alpha: 0.2)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

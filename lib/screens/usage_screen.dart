@@ -13,20 +13,20 @@ class UsageScreen extends StatelessWidget {
     final limiter = context.watch<RateLimiter>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
+      backgroundColor: const Color(0xFF0D1117),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
           'API Usage',
           style: TextStyle(
-            color: Colors.white,
+            color: Color(0xFFE6EDF3),
             fontWeight: FontWeight.w700,
             fontSize: 18,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFFE6EDF3)),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
@@ -36,7 +36,7 @@ class UsageScreen extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: const Text('Daily counters reset'),
-                  backgroundColor: const Color(0xFF1E1E2E),
+                  backgroundColor: const Color(0xFF161B22),
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
@@ -71,10 +71,10 @@ class _ModelUsageCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
+        color: const Color(0xFF30363D),
         borderRadius: BorderRadius.circular(16),
         border:
-            Border.all(color: Colors.white.withValues(alpha: 0.06)),
+            Border.all(color: const Color(0xFF30363D)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,13 +86,13 @@ class _ModelUsageCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF7C3AED).withValues(alpha: 0.15),
+                  color: const Color(0xFF39D353).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   model.label,
                   style: const TextStyle(
-                    color: Color(0xFF7C3AED),
+                    color: Color(0xFF39D353),
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                   ),
@@ -102,7 +102,7 @@ class _ModelUsageCard extends StatelessWidget {
               Text(
                 model.modelId.split('/').last,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.35),
+                  color: const Color(0xFF8B949E),
                   fontSize: 11,
                 ),
               ),
@@ -169,12 +169,12 @@ class _UsageRow extends StatelessWidget {
           children: [
             Text(label,
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: const Color(0xFF8B949E),
                     fontSize: 12)),
             Text(
               '$current / $limit',
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.7),
+                color: const Color(0xFF8B949E),
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
@@ -187,7 +187,7 @@ class _UsageRow extends StatelessWidget {
           child: LinearProgressIndicator(
             value: ratio,
             minHeight: 4,
-            backgroundColor: Colors.white.withValues(alpha: 0.06),
+            backgroundColor: const Color(0xFF30363D),
             valueColor: AlwaysStoppedAnimation(color),
           ),
         ),

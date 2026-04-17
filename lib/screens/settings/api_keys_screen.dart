@@ -53,12 +53,12 @@ class _ApiKeysScreenState extends State<ApiKeysScreen> {
     final keys = manager.keys;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
+      backgroundColor: const Color(0xFF0D1117),
       appBar: AppBar(
-        title: const Text('API Keys', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
+        title: const Text('API Keys', style: TextStyle(color: Color(0xFFE6EDF3), fontSize: 18, fontWeight: FontWeight.w600)),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Color(0xFFE6EDF3)),
       ),
       body: SafeArea(
         child: ListView(
@@ -66,14 +66,14 @@ class _ApiKeysScreenState extends State<ApiKeysScreen> {
           children: [
             const Text(
               'Manage your Groq API keys here. Your keys are stored locally and securely.',
-              style: TextStyle(color: Colors.white70, fontSize: 14),
+              style: TextStyle(color: Color(0xFF8B949E), fontSize: 14),
             ),
             const SizedBox(height: 24),
             if (keys.isEmpty && !_isAdding)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 40),
                 child: Center(
-                  child: Text('No API keys added yet.', style: TextStyle(color: Colors.white54)),
+                  child: Text('No API keys added yet.', style: TextStyle(color: Color(0xFF8B949E))),
                 ),
               ),
             for (final keyEntry in keys)
@@ -84,7 +84,7 @@ class _ApiKeysScreenState extends State<ApiKeysScreen> {
                   color: Colors.white.withAlpha(12),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: keyEntry.isDefault ? const Color(0xFF7C3AED) : Colors.transparent,
+                    color: keyEntry.isDefault ? const Color(0xFF39D353) : Colors.transparent,
                     width: 2,
                   ),
                 ),
@@ -96,23 +96,23 @@ class _ApiKeysScreenState extends State<ApiKeysScreen> {
                       children: [
                         Text(
                           keyEntry.label,
-                          style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white, fontSize: 16),
+                          style: const TextStyle(fontWeight: FontWeight.w600, color: Color(0xFFE6EDF3), fontSize: 16),
                         ),
                         if (keyEntry.isDefault)
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF7C3AED).withAlpha(40),
+                              color: const Color(0xFF39D353).withAlpha(40),
                               borderRadius: BorderRadius.circular(4),
                             ),
-                            child: const Text('DEFAULT', style: TextStyle(color: Color(0xFF7C3AED), fontSize: 10, fontWeight: FontWeight.bold)),
+                            child: const Text('DEFAULT', style: TextStyle(color: Color(0xFF39D353), fontSize: 10, fontWeight: FontWeight.bold)),
                           )
                       ],
                     ),
                     const SizedBox(height: 8),
                     Text(
                       keyEntry.maskedValue,
-                      style: const TextStyle(fontFamily: 'monospace', color: Colors.white70),
+                      style: const TextStyle(fontFamily: 'monospace', color: Color(0xFF8B949E)),
                     ),
                     const SizedBox(height: 12),
                     Row(
@@ -121,7 +121,7 @@ class _ApiKeysScreenState extends State<ApiKeysScreen> {
                         if (!keyEntry.isDefault)
                           TextButton(
                             onPressed: () => manager.setDefaultKey(keyEntry.id),
-                            child: const Text('Set as Default', style: TextStyle(color: Color(0xFF2563EB))),
+                            child: const Text('Set as Default', style: TextStyle(color: Color(0xFF26A641))),
                           ),
                         const SizedBox(width: 8),
                         IconButton(
@@ -145,14 +145,14 @@ class _ApiKeysScreenState extends State<ApiKeysScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text('Add New Key', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                    const Text('Add New Key', style: TextStyle(color: Color(0xFFE6EDF3), fontWeight: FontWeight.w600)),
                     const SizedBox(height: 16),
                     TextField(
                       controller: _labelController,
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Color(0xFFE6EDF3)),
                       decoration: InputDecoration(
                         labelText: 'Label (e.g. Work, Personal)',
-                        labelStyle: const TextStyle(color: Colors.white54),
+                        labelStyle: const TextStyle(color: Color(0xFF8B949E)),
                         filled: true,
                         fillColor: Colors.black26,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
@@ -161,10 +161,10 @@ class _ApiKeysScreenState extends State<ApiKeysScreen> {
                     const SizedBox(height: 12),
                     TextField(
                       controller: _keyController,
-                      style: const TextStyle(color: Colors.white, fontFamily: 'monospace'),
+                      style: const TextStyle(color: Color(0xFFE6EDF3), fontFamily: 'monospace'),
                       decoration: InputDecoration(
                         labelText: 'API Key (gsk_...)',
-                        labelStyle: const TextStyle(color: Colors.white54),
+                        labelStyle: const TextStyle(color: Color(0xFF8B949E)),
                         filled: true,
                         fillColor: Colors.black26,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
@@ -185,11 +185,11 @@ class _ApiKeysScreenState extends State<ApiKeysScreen> {
                             _labelController.clear();
                             _keyController.clear();
                           }),
-                          child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+                          child: const Text('Cancel', style: TextStyle(color: Color(0xFF8B949E))),
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton(
-                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF7C3AED), foregroundColor: Colors.white),
+                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF39D353), foregroundColor: const Color(0xFFE6EDF3)),
                           onPressed: _addKey,
                           child: const Text('Save'),
                         ),
@@ -206,7 +206,7 @@ class _ApiKeysScreenState extends State<ApiKeysScreen> {
                 label: const Text('Add API Key'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white.withAlpha(20),
-                  foregroundColor: Colors.white,
+                  foregroundColor: const Color(0xFFE6EDF3),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),

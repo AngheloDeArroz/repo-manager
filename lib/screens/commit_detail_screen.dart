@@ -135,12 +135,12 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
+      backgroundColor: const Color(0xFF0D1117),
       body: SafeArea(
         child: Column(
           children: [
             _buildAppBar(),
-            Divider(height: 1, color: Colors.white.withValues(alpha: 0.06)),
+            Divider(height: 1, color: const Color(0xFF30363D)),
             Expanded(child: _buildBody()),
           ],
         ),
@@ -156,7 +156,7 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.arrow_back_rounded,
-                color: Colors.white, size: 22),
+                color: Color(0xFFE6EDF3), size: 22),
           ),
           const SizedBox(width: 4),
           Expanded(
@@ -166,7 +166,7 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
                 Text(
                   widget.commit.title,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFFE6EDF3),
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     letterSpacing: -0.3,
@@ -180,13 +180,13 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
                       padding: const EdgeInsets.symmetric(
                           horizontal: 5, vertical: 1),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.06),
+                        color: const Color(0xFF30363D),
                         borderRadius: BorderRadius.circular(3),
                       ),
                       child: Text(
                         widget.commit.shortSha,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.4),
+                          color: const Color(0xFF8B949E),
                           fontSize: 10.5,
                           fontFamily: 'monospace',
                         ),
@@ -196,7 +196,7 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
                     Text(
                       widget.commit.authorLogin ?? widget.commit.authorName,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.3),
+                        color: const Color(0xFF8B949E),
                         fontSize: 11.5,
                       ),
                     ),
@@ -213,7 +213,7 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
   Widget _buildBody() {
     if (_isLoading) {
       return const Center(
-        child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
+        child: CircularProgressIndicator(color: Color(0xFF39D353)),
       );
     }
 
@@ -223,19 +223,19 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.error_outline_rounded,
-                size: 40, color: Colors.white.withValues(alpha: 0.15)),
+                size: 40, color: const Color(0xFF30363D)),
             const SizedBox(height: 12),
             Text(_error!,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.4), fontSize: 13)),
+                    color: const Color(0xFF8B949E), fontSize: 13)),
             const SizedBox(height: 16),
             TextButton.icon(
               onPressed: _loadDetail,
               icon: const Icon(Icons.refresh_rounded, size: 16),
               label: const Text('Retry'),
               style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFF7C3AED)),
+                  foregroundColor: const Color(0xFF39D353)),
             ),
           ],
         ),
@@ -250,7 +250,7 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
         // — Stats bar ——————————————————————————————————————
         _buildStatsBar(detail),
 
-        Divider(height: 1, color: Colors.white.withValues(alpha: 0.06)),
+        Divider(height: 1, color: const Color(0xFF30363D)),
 
         // — File diffs ————————————————————————————————————
         Expanded(
@@ -288,13 +288,13 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
           _StatChip(
             icon: Icons.insert_drive_file_rounded,
             label: '${detail.changedFiles ?? 0} files',
-            color: Colors.white.withValues(alpha: 0.5),
+            color: const Color(0xFF8B949E),
           ),
           const SizedBox(width: 12),
           _StatChip(
             icon: Icons.add_rounded,
             label: '${detail.additions ?? 0}',
-            color: const Color(0xFF22C55E),
+            color: const Color(0xFF39D353),
           ),
           const SizedBox(width: 12),
           _StatChip(
@@ -310,9 +310,9 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
   Widget _buildReviewSection() {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E2E),
+        color: const Color(0xFF161B22),
         border: Border(
-          top: BorderSide(color: Colors.white.withValues(alpha: 0.06)),
+          top: BorderSide(color: const Color(0xFF30363D)),
         ),
       ),
       child: Column(
@@ -331,7 +331,7 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
                           width: 16,
                           height: 16,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white70),
+                              strokeWidth: 2, color: Color(0xFF8B949E)),
                         )
                       : const Icon(Icons.rate_review_rounded, size: 18),
                   label: Text(
@@ -340,11 +340,11 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
                         fontWeight: FontWeight.w600, fontSize: 13.5),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7C3AED),
-                    foregroundColor: Colors.white,
+                    backgroundColor: const Color(0xFF39D353),
+                    foregroundColor: const Color(0xFFE6EDF3),
                     disabledBackgroundColor:
-                        const Color(0xFF7C3AED).withValues(alpha: 0.5),
-                    disabledForegroundColor: Colors.white70,
+                        const Color(0xFF39D353).withValues(alpha: 0.5),
+                    disabledForegroundColor: const Color(0xFF8B949E),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                     elevation: 0,
@@ -377,7 +377,7 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF7C3AED), Color(0xFF2563EB)],
+                    colors: [Color(0xFF39D353), Color(0xFF26A641)],
                   ),
                   borderRadius: BorderRadius.circular(6),
                 ),
@@ -385,12 +385,12 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.rate_review_rounded,
-                        size: 12, color: Colors.white),
+                        size: 12, color: Color(0xFFE6EDF3)),
                     SizedBox(width: 4),
                     Text(
                       'AI Code Review',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFFE6EDF3),
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
@@ -403,13 +403,13 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
                 IconButton(
                   onPressed: _isReviewing ? null : _reviewWithAI,
                   icon: Icon(Icons.refresh_rounded,
-                      size: 16, color: Colors.white.withValues(alpha: 0.3)),
+                      size: 16, color: const Color(0xFF8B949E)),
                   tooltip: 'Re-review',
                 ),
                 IconButton(
                   onPressed: () => setState(() => _review = null),
                   icon: Icon(Icons.close_rounded,
-                      size: 16, color: Colors.white.withValues(alpha: 0.3)),
+                      size: 16, color: const Color(0xFF8B949E)),
                   tooltip: 'Dismiss',
                 ),
               ],
@@ -427,12 +427,12 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Color(0xFF7C3AED)),
+                        strokeWidth: 2, color: Color(0xFF39D353)),
                   ),
                   SizedBox(height: 12),
                   Text(
                     'Reviewing changes…',
-                    style: TextStyle(color: Colors.white54, fontSize: 12),
+                    style: TextStyle(color: Color(0xFF8B949E), fontSize: 12),
                   ),
                 ],
               ),
@@ -447,7 +447,7 @@ Be direct and technical. Use markdown. Keep it under 300 words.''',
                 child: Text(
                   _review!,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.75),
+                    color: const Color(0xFF8B949E),
                     fontSize: 13,
                     height: 1.6,
                   ),
@@ -510,9 +510,9 @@ class _FileDiffCard extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(12, 6, 12, 0),
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF1E1E2E),
+          color: const Color(0xFF161B22),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+          border: Border.all(color: const Color(0xFF30363D)),
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
@@ -531,7 +531,7 @@ class _FileDiffCard extends StatelessWidget {
                       child: Text(
                         file.filename,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFFE6EDF3),
                           fontSize: 12.5,
                           fontFamily: 'monospace',
                           fontWeight: FontWeight.w500,
@@ -545,7 +545,7 @@ class _FileDiffCard extends StatelessWidget {
                       Text(
                         '+${file.additions}',
                         style: const TextStyle(
-                          color: Color(0xFF22C55E),
+                          color: Color(0xFF39D353),
                           fontSize: 11,
                           fontFamily: 'monospace',
                         ),
@@ -568,7 +568,7 @@ class _FileDiffCard extends StatelessWidget {
                             ? Icons.keyboard_arrow_up_rounded
                             : Icons.keyboard_arrow_down_rounded,
                         size: 18,
-                        color: Colors.white.withValues(alpha: 0.25),
+                        color: const Color(0xFF8B949E),
                       ),
                     ],
                   ],
@@ -584,7 +584,7 @@ class _FileDiffCard extends StatelessWidget {
                   color: const Color(0xFF12121E),
                   border: Border(
                     top: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.04)),
+                        color: const Color(0xFF30363D)),
                   ),
                 ),
                 child: SingleChildScrollView(
@@ -616,12 +616,12 @@ class _FileDiffCard extends StatelessWidget {
   }
 
   Color _lineColor(String line) {
-    if (line.startsWith('+')) return const Color(0xFF22C55E);
+    if (line.startsWith('+')) return const Color(0xFF39D353);
     if (line.startsWith('-')) return const Color(0xFFEF4444);
     if (line.startsWith('@@')) {
-      return const Color(0xFF7C3AED).withValues(alpha: 0.7);
+      return const Color(0xFF39D353).withValues(alpha: 0.7);
     }
-    return Colors.white.withValues(alpha: 0.5);
+    return const Color(0xFF8B949E);
   }
 }
 
@@ -634,11 +634,11 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (label, color) = switch (status) {
-      'added' => ('A', const Color(0xFF22C55E)),
+      'added' => ('A', const Color(0xFF39D353)),
       'removed' => ('D', const Color(0xFFEF4444)),
       'modified' => ('M', const Color(0xFFFBBF24)),
       'renamed' => ('R', const Color(0xFF3B82F6)),
-      _ => ('C', Colors.white.withValues(alpha: 0.4)),
+      _ => ('C', const Color(0xFF8B949E)),
     };
 
     return Container(

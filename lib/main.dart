@@ -96,11 +96,11 @@ class MondayApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           brightness: Brightness.dark,
-          scaffoldBackgroundColor: const Color(0xFF0F0F1A),
+          scaffoldBackgroundColor: const Color(0xFF0D1117),
           colorScheme: const ColorScheme.dark(
-            primary: Color(0xFF7C3AED),
-            secondary: Color(0xFF2563EB),
-            surface: Color(0xFF1E1E2E),
+            primary: Color(0xFF39D353),
+            secondary: Color(0xFF26A641),
+            surface: Color(0xFF161B22),
           ),
           fontFamily: 'Roboto',
           useMaterial3: true,

@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../services/groq_service.dart';
 import '../services/model_provider.dart';
-import '../widgets/model_selector_chip.dart';
-import '../widgets/usage_indicator.dart';
+import '../widgets/model_picker_button.dart';
 import 'profile_screen.dart';
 import 'repo_list_screen.dart';
 
@@ -22,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
+      backgroundColor: const Color(0xFF0D1117),
       body: SafeArea(
         child: Column(
           children: [
@@ -40,8 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            // — Usage bar (shared) ————————————————————————
-            const UsageIndicator(),
           ],
         ),
       ),
@@ -60,13 +57,13 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               gradient: const LinearGradient(
-                colors: [Color(0xFF7C3AED), Color(0xFF2563EB)],
+                colors: [Color(0xFF39D353), Color(0xFF26A641)],
               ),
             ),
             child: const Center(
               child: Text('M',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFFE6EDF3),
                       fontWeight: FontWeight.w800,
                       fontSize: 16)),
             ),
@@ -75,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const Text(
             'Monday',
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFFE6EDF3),
               fontSize: 20,
               fontWeight: FontWeight.w700,
               letterSpacing: -0.5,
@@ -84,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const Spacer(),
           IconButton(
             icon: Icon(Icons.settings_outlined,
-                color: Colors.white.withValues(alpha: 0.4), size: 22),
+                color: const Color(0xFF8B949E), size: 22),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const ProfileScreen()),
             ),
@@ -97,33 +94,35 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildBottomNav() {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E2E),
+        color: const Color(0xFF161B22),
         border: Border(
-          top: BorderSide(color: Colors.white.withValues(alpha: 0.06)),
+          top: BorderSide(color: const Color(0xFF30363D)),
         ),
       ),
-      child: BottomNavigationBar(
-        currentIndex: _tabIndex,
-        onTap: (i) => setState(() => _tabIndex = i),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        selectedItemColor: const Color(0xFF7C3AED),
-        unselectedItemColor: Colors.white.withValues(alpha: 0.3),
-        selectedFontSize: 11,
-        unselectedFontSize: 11,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble_rounded, size: 20),
-            activeIcon: Icon(Icons.chat_bubble_rounded, size: 22),
-            label: 'Chat',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.folder_rounded, size: 20),
-            activeIcon: Icon(Icons.folder_rounded, size: 22),
-            label: 'Repos',
-          ),
-        ],
+      child: SafeArea(
+        child: BottomNavigationBar(
+          currentIndex: _tabIndex,
+          onTap: (i) => setState(() => _tabIndex = i),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          selectedItemColor: const Color(0xFF39D353),
+          unselectedItemColor: const Color(0xFF8B949E),
+          selectedFontSize: 11,
+          unselectedFontSize: 11,
+          type: BottomNavigationBarType.fixed,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.chat_bubble_rounded, size: 20),
+              activeIcon: Icon(Icons.chat_bubble_rounded, size: 22),
+              label: 'Chat',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.folder_rounded, size: 20),
+              activeIcon: Icon(Icons.folder_rounded, size: 22),
+              label: 'Repos',
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -200,10 +199,10 @@ class _ChatTabState extends State<_ChatTab> {
 
     return Column(
       children: [
-        // — Model chips ——————————————————————————————————
+        // — Model Picker (Top) ———————————————————————————
         const Padding(
-          padding: EdgeInsets.only(top: 8, bottom: 4),
-          child: ModelSelectorChip(),
+          padding: EdgeInsets.only(top: 12, bottom: 4),
+          child: Center(child: ModelPickerButton()),
         ),
 
         // — Chat area ————————————————————————————————————
@@ -212,7 +211,7 @@ class _ChatTabState extends State<_ChatTab> {
               ? _buildEmptyState()
               : ListView.builder(
                   controller: _scrollController,
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                   itemCount: _messages.length,
                   itemBuilder: (_, i) => _MessageBubble(msg: _messages[i]),
                 ),
@@ -230,12 +229,12 @@ class _ChatTabState extends State<_ChatTab> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.auto_awesome_rounded,
-              size: 48, color: Colors.white.withValues(alpha: 0.1)),
+              size: 48, color: const Color(0xFF30363D)),
           const SizedBox(height: 16),
           Text(
             'Ask Monday anything',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.3),
+              color: const Color(0xFF8B949E),
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
@@ -249,18 +248,19 @@ class _ChatTabState extends State<_ChatTab> {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E2E),
+        color: const Color(0xFF161B22),
         border: Border(
           top: BorderSide(
-              color: Colors.white.withValues(alpha: 0.06)),
+              color: const Color(0xFF30363D)),
         ),
       ),
       child: Row(
         children: [
+          const SizedBox(width: 8),
           Expanded(
             child: TextField(
               controller: _inputController,
-              style: const TextStyle(color: Colors.white, fontSize: 14),
+              style: const TextStyle(color: Color(0xFFE6EDF3), fontSize: 14),
               maxLines: 4,
               minLines: 1,
               textInputAction: TextInputAction.send,
@@ -268,7 +268,7 @@ class _ChatTabState extends State<_ChatTab> {
               decoration: InputDecoration(
                 hintText: 'Type a message…',
                 hintStyle: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.25)),
+                    color: const Color(0xFF8B949E)),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(vertical: 10),
               ),
@@ -281,8 +281,8 @@ class _ChatTabState extends State<_ChatTab> {
             height: 40,
             decoration: BoxDecoration(
               color: isLoading
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : const Color(0xFF7C3AED),
+                  ? const Color(0xFF30363D)
+                  : const Color(0xFF39D353),
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconButton(
@@ -292,10 +292,10 @@ class _ChatTabState extends State<_ChatTab> {
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white70),
+                          strokeWidth: 2, color: Color(0xFF8B949E)),
                     )
-                  : const Icon(Icons.arrow_upward_rounded,
-                      color: Colors.white, size: 20),
+                  : const Icon(Icons.send_rounded,
+                      color: Color(0xFFE6EDF3), size: 18),
             ),
           ),
         ],
@@ -334,8 +334,8 @@ class _MessageBubble extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
             color: isUser
-                ? const Color(0xFF7C3AED)
-                : Colors.white.withValues(alpha: 0.07),
+                ? const Color(0xFF39D353)
+                : const Color(0xFF30363D),
             borderRadius: BorderRadius.only(
               topLeft: const Radius.circular(16),
               topRight: const Radius.circular(16),
@@ -347,8 +347,8 @@ class _MessageBubble extends StatelessWidget {
             msg.text,
             style: TextStyle(
               color: isUser
-                  ? Colors.white
-                  : Colors.white.withValues(alpha: 0.85),
+                  ? const Color(0xFFE6EDF3)
+                  : const Color(0xFFE6EDF3),
               fontSize: 14,
               height: 1.5,
             ),

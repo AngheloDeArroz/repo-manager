@@ -13,7 +13,7 @@ class FileTreeTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      splashColor: const Color(0xFF7C3AED).withValues(alpha: 0.06),
+      splashColor: const Color(0xFF39D353).withValues(alpha: 0.06),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Row(
@@ -28,8 +28,8 @@ class FileTreeTile extends StatelessWidget {
                 entry.path,
                 style: TextStyle(
                   color: entry.isDirectory
-                      ? Colors.white
-                      : Colors.white.withValues(alpha: 0.8),
+                      ? const Color(0xFFE6EDF3)
+                      : const Color(0xFFE6EDF3),
                   fontSize: 13.5,
                   fontWeight:
                       entry.isDirectory ? FontWeight.w600 : FontWeight.w400,
@@ -45,7 +45,7 @@ class FileTreeTile extends StatelessWidget {
               Text(
                 _formatSize(entry.size!),
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: const Color(0xFF8B949E),
                   fontSize: 11,
                 ),
               ),
@@ -56,7 +56,7 @@ class FileTreeTile extends StatelessWidget {
               Icon(
                 Icons.chevron_right_rounded,
                 size: 18,
-                color: Colors.white.withValues(alpha: 0.2),
+                color: const Color(0xFF8B949E),
               ),
           ],
         ),
@@ -84,13 +84,13 @@ class _FileIcon extends StatelessWidget {
         width: 28,
         height: 28,
         decoration: BoxDecoration(
-          color: const Color(0xFF7C3AED).withValues(alpha: 0.15),
+          color: const Color(0xFF39D353).withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(7),
         ),
         child: const Icon(
           Icons.folder_rounded,
           size: 16,
-          color: Color(0xFF7C3AED),
+          color: Color(0xFF39D353),
         ),
       );
     }
