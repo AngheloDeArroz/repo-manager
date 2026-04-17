@@ -82,6 +82,8 @@ class GitHubAuthService extends ChangeNotifier {
     }
   }
 
+  String? _lastHandledCode;
+
   /// Called when the app receives the OAuth redirect with an authorization code.
   ///
   /// POSTs directly to GitHub's token endpoint with `client_id`,
@@ -89,6 +91,12 @@ class GitHubAuthService extends ChangeNotifier {
   /// be `application/json` so GitHub returns JSON rather than form-encoded
   /// data.
   Future<void> exchangeCode(String code) async {
+    if (_lastHandledCode == code) {
+      debugPrint('[OAuth] Ignoring duplicate code exchange request.');
+      return;
+    }
+    _lastHandledCode = code;
+
     _isLoading = true;
     _error = null;
     notifyListeners();

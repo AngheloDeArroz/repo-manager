@@ -5,8 +5,8 @@ import '../services/github_auth_service.dart';
 import '../services/groq_service.dart';
 import '../services/model_provider.dart';
 import '../models/github_user.dart';
-import '../widgets/app_logo.dart';
 import '../widgets/model_picker_button.dart';
+import '../widgets/pixel_banner.dart';
 import 'profile_screen.dart';
 import 'repo_list_screen.dart';
 
@@ -52,16 +52,9 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
       child: Row(
         children: [
-          const AppLogo(size: 38, elevation: false),
-          const SizedBox(width: 10),
-          const Text(
-            'Monday',
-            style: TextStyle(
-              color: Color(0xFFE6EDF3),
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.5,
-            ),
+          const SizedBox(
+            height: 24, // Keep it app-bar sized
+            child: PixelBanner(text: 'Monday'),
           ),
           const Spacer(),
           InkWell(
