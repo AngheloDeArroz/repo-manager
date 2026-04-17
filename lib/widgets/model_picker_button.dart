@@ -5,92 +5,61 @@ import '../models/groq_model.dart';
 import '../services/model_provider.dart';
 
 class ModelPickerButton extends StatelessWidget {
-  const ModelPickerButton({
-    super.key,
-    this.isUp = false,
-  });
-
-  final bool isUp;
+  const ModelPickerButton({super.key});
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<ModelProvider>();
     final active = provider.currentModel;
 
-    return PopupMenuButton<GroqModel>(
-      initialValue: active,
-      onSelected: (model) => provider.setModel(model),
-      offset: isUp ? const Offset(0, -120) : const Offset(0, 40),
-      color: const Color(0xFF161B22),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: const Color(0xFF30363D)),
-      ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: const Color(0xFF161B22),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFF30363D)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+    return SizedBox(
+      height: 38,
+      width: 38,
+      child: PopupMenuButton<GroqModel>(
+        initialValue: active,
+        onSelected: (model) => provider.setModel(model),
+        // Push the menu upward so it sits above the input field
+        offset: const Offset(0, -140),
+        color: const Color(0xFF161B22),
+        elevation: 8,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: Color(0xFF30363D)),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              _iconFor(active),
-              size: 14,
-              color: const Color(0xFF39D353),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              active.label,
-              style: TextStyle(
-                color: const Color(0xFFE6EDF3),
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(width: 4),
-            Icon(
-              Icons.keyboard_arrow_down_rounded,
-              size: 14,
-              color: const Color(0xFF8B949E),
-            ),
-          ],
+        tooltip: 'Change AI Model',
+        child: Icon(
+          _iconFor(active),
+          size: 20,
+          color: const Color(0xFF39D353),
         ),
-      ),
-      itemBuilder: (context) {
-        return GroqModel.values.map((model) {
-          final isActive = model == active;
-          return PopupMenuItem<GroqModel>(
-            value: model,
-            child: Row(
-              children: [
-                Icon(
-                  _iconFor(model),
-                  size: 16,
-                  color: isActive ? const Color(0xFF39D353) : const Color(0xFF8B949E),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  model.label,
-                  style: TextStyle(
-                    color: isActive ? const Color(0xFFE6EDF3) : const Color(0xFF8B949E),
-                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+        itemBuilder: (context) {
+          return GroqModel.values.map((model) {
+            final isActive = model == active;
+            return PopupMenuItem<GroqModel>(
+              value: model,
+              height: 44,
+              child: Row(
+                children: [
+                  Icon(
+                    _iconFor(model),
+                    size: 16,
+                    color: isActive ? const Color(0xFF39D353) : const Color(0xFF8B949E),
                   ),
-                ),
-              ],
-            ),
-          );
-        }).toList();
-      },
+                  const SizedBox(width: 10),
+                  Text(
+                    model.label,
+                    style: TextStyle(
+                      color: isActive ? const Color(0xFFE6EDF3) : const Color(0xFF8B949E),
+                      fontSize: 14,
+                      fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList();
+        },
+      ),
     );
   }
 
@@ -102,3 +71,4 @@ class ModelPickerButton extends StatelessWidget {
     };
   }
 }
+
