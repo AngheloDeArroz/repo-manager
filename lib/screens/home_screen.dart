@@ -347,7 +347,7 @@ class _ChatTabState extends State<_ChatTab> {
                       hintText: 'Message Monday...',
                       hintStyle: TextStyle(color: Color(0xFF8B949E)),
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.only(left: 0, right: 16, top: 14, bottom: 14),
+                      contentPadding: EdgeInsets.only(left: 10, right: 16, top: 14, bottom: 14),
                     ),
                   ),
                 ),
