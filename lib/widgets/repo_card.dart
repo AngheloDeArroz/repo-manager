@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/github_repo.dart';
 
-/// A glassmorphic card for a single repository in the list.
+/// A repository card that matches the app's dark GitHub-like theme.
 class RepoCard extends StatelessWidget {
   const RepoCard({super.key, required this.repo, required this.onTap});
 
@@ -12,36 +12,45 @@ class RepoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(14),
           splashColor: const Color(0xFF39D353).withValues(alpha: 0.08),
+          highlightColor: const Color(0xFF39D353).withValues(alpha: 0.04),
           child: Ink(
             decoration: BoxDecoration(
               color: const Color(0xFF161B22),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: const Color(0xFF30363D),
-              ),
+              border: Border.all(color: const Color(0xFF30363D)),
             ),
             padding: const EdgeInsets.all(14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // — Row 1: name + private badge ———————————————
                 Row(
                   children: [
-                    Icon(
-                      repo.isPrivate
-                          ? Icons.lock_rounded
-                          : Icons.menu_book_rounded,
-                      size: 16,
-                      color: repo.isPrivate
-                          ? const Color(0xFFFBBF24)
-                          : const Color(0xFF39D353),
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color:
+                            (repo.isPrivate
+                                    ? const Color(0xFFFBBF24)
+                                    : const Color(0xFF39D353))
+                                .withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        repo.isPrivate
+                            ? Icons.lock_rounded
+                            : Icons.menu_book_rounded,
+                        size: 16,
+                        color: repo.isPrivate
+                            ? const Color(0xFFFBBF24)
+                            : const Color(0xFF39D353),
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -60,10 +69,13 @@ class RepoCard extends StatelessWidget {
                     if (repo.isPrivate)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 7, vertical: 2),
+                          horizontal: 7,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
-                          color:
-                              const Color(0xFFFBBF24).withValues(alpha: 0.12),
+                          color: const Color(
+                            0xFFFBBF24,
+                          ).withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: const Text(
@@ -77,15 +89,13 @@ class RepoCard extends StatelessWidget {
                       ),
                   ],
                 ),
-
-                // — Description ——————————————————————————————
                 if (repo.description != null &&
                     repo.description!.isNotEmpty) ...[
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   Text(
                     repo.description!,
-                    style: TextStyle(
-                      color: const Color(0xFF8B949E),
+                    style: const TextStyle(
+                      color: Color(0xFF8B949E),
                       fontSize: 12.5,
                       height: 1.35,
                     ),
@@ -93,10 +103,7 @@ class RepoCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
-
                 const SizedBox(height: 10),
-
-                // — Row 2: language · stars · updated ————————
                 Row(
                   children: [
                     if (repo.language != null) ...[
@@ -104,29 +111,31 @@ class RepoCard extends StatelessWidget {
                       const SizedBox(width: 5),
                       Text(
                         repo.language!,
-                        style: TextStyle(
-                          color: const Color(0xFF8B949E),
+                        style: const TextStyle(
+                          color: Color(0xFF8B949E),
                           fontSize: 11.5,
                         ),
                       ),
                       const SizedBox(width: 14),
                     ],
-                    Icon(Icons.star_rounded,
-                        size: 14,
-                        color: const Color(0xFF8B949E)),
+                    const Icon(
+                      Icons.star_rounded,
+                      size: 14,
+                      color: Color(0xFF8B949E),
+                    ),
                     const SizedBox(width: 3),
                     Text(
                       '${repo.starCount}',
-                      style: TextStyle(
-                        color: const Color(0xFF8B949E),
+                      style: const TextStyle(
+                        color: Color(0xFF8B949E),
                         fontSize: 11.5,
                       ),
                     ),
                     const Spacer(),
                     Text(
                       _relativeTime(repo.updatedAt),
-                      style: TextStyle(
-                        color: const Color(0xFF8B949E),
+                      style: const TextStyle(
+                        color: Color(0xFF8B949E),
                         fontSize: 11,
                       ),
                     ),
@@ -142,16 +151,14 @@ class RepoCard extends StatelessWidget {
 
   static String _relativeTime(DateTime dt) {
     final diff = DateTime.now().difference(dt);
-    if (diff.inDays > 365) return '${diff.inDays ~/ 365}y ago';
-    if (diff.inDays > 30) return '${diff.inDays ~/ 30}mo ago';
+    if (diff.inDays >= 365) return '${diff.inDays ~/ 365}y ago';
+    if (diff.inDays >= 30) return '${diff.inDays ~/ 30}mo ago';
     if (diff.inDays > 0) return '${diff.inDays}d ago';
     if (diff.inHours > 0) return '${diff.inHours}h ago';
     if (diff.inMinutes > 0) return '${diff.inMinutes}m ago';
     return 'just now';
   }
 }
-
-// — Language color dot ——————————————————————————————————
 
 class _LanguageDot extends StatelessWidget {
   const _LanguageDot({required this.language});
@@ -165,6 +172,10 @@ class _LanguageDot extends StatelessWidget {
       decoration: BoxDecoration(
         color: _colorFor(language),
         shape: BoxShape.circle,
+        border: Border.all(
+          color: Colors.black.withValues(alpha: 0.2),
+          width: 0.5,
+        ),
       ),
     );
   }
