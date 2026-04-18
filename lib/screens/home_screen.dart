@@ -8,6 +8,7 @@ import '../services/model_provider.dart';
 import '../models/github_user.dart';
 import '../widgets/model_picker_button.dart';
 import '../widgets/pixel_banner.dart';
+import 'dashboard_screen.dart';
 import 'profile_screen.dart';
 import 'repo_list_screen.dart';
 
@@ -38,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: IndexedStack(
                 index: _tabIndex,
-                children: const [_ChatTab(), RepoListScreen()],
+                children: const [DashboardScreen(), _ChatTab(), RepoListScreen()],
               ),
             ),
           ],
@@ -107,8 +108,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildNavItem(0, Icons.chat_bubble_rounded, 'Chat'),
-            _buildNavItem(1, Icons.folder_rounded, 'Repos'),
+            _buildNavItem(0, Icons.dashboard_rounded, 'Dashboard'),
+            _buildNavItem(1, Icons.chat_bubble_rounded, 'Chat'),
+            _buildNavItem(2, Icons.folder_rounded, 'Repos'),
           ],
         ),
       ),

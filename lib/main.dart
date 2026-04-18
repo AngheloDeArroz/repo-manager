@@ -15,6 +15,7 @@ import 'services/model_provider.dart';
 import 'services/rate_limiter.dart';
 import 'services/repo_provider.dart';
 import 'services/secure_storage_service.dart';
+import 'services/activity_tracker.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,12 +35,14 @@ void main() async {
     storageService: storageService,
     apiService: apiService,
   );
+  final activityTracker = ActivityTracker();
 
   await Future.wait([
     apiKeyManager.init(),
     rateLimiter.init(),
     modelProvider.init(),
     authService.init(),
+    activityTracker.init(),
   ]);
 
   runApp(
@@ -51,6 +54,7 @@ void main() async {
       authService: authService,
       apiService: apiService,
       repoProvider: repoProvider,
+      activityTracker: activityTracker,
     ),
   );
 }
@@ -65,6 +69,7 @@ class MondayApp extends StatelessWidget {
     required this.authService,
     required this.apiService,
     required this.repoProvider,
+    required this.activityTracker,
   });
 
   final SecureStorageService storageService;
@@ -74,6 +79,7 @@ class MondayApp extends StatelessWidget {
   final GitHubAuthService authService;
   final GitHubApiService apiService;
   final RepoProvider repoProvider;
+  final ActivityTracker activityTracker;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +90,7 @@ class MondayApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: rateLimiter),
         ChangeNotifierProvider.value(value: authService),
         ChangeNotifierProvider.value(value: repoProvider),
+        ChangeNotifierProvider.value(value: activityTracker),
         ChangeNotifierProvider(
           create: (_) => GroqService(
             apiKeyManager: apiKeyManager,

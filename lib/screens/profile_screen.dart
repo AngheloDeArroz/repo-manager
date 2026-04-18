@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/github_contribution_calendar.dart';
 import '../models/github_user.dart';
 import '../services/github_auth_service.dart';
-import '../widgets/contribution_graph_card.dart';
 import 'settings/api_keys_screen.dart';
 import 'usage_screen.dart';
 
@@ -17,25 +15,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  Future<GitHubContributionCalendar?>? _contributionFuture;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _contributionFuture ??= _loadContributionCalendar();
-  }
-
-  Future<GitHubContributionCalendar?> _loadContributionCalendar() {
-    final auth = context.read<GitHubAuthService>();
-    return auth.apiService.getContributionCalendar();
-  }
-
-  void _refreshContributionCalendar() {
-    setState(() {
-      _contributionFuture = _loadContributionCalendar();
-    });
-  }
-
   Future<void> _signOut() async {
     final auth = context.read<GitHubAuthService>();
     await auth.logout();
@@ -82,12 +61,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
               children: [
                 _HeroCard(user: user),
-                const SizedBox(height: 14),
-                if (_contributionFuture != null)
-                  ContributionGraphCard(
-                    future: _contributionFuture!,
-                    onRetry: _refreshContributionCalendar,
-                  ),
                 const SizedBox(height: 16),
                 const _SectionLabel(
                   title: 'Preferences',

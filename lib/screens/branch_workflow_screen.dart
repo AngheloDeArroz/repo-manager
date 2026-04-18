@@ -7,6 +7,7 @@ import '../services/api_key_manager.dart';
 import '../services/groq_service.dart';
 import '../services/model_provider.dart';
 import '../services/repo_provider.dart';
+import '../services/activity_tracker.dart';
 import '../widgets/model_picker_button.dart';
 import '../widgets/needs_api_key_prompt.dart';
 
@@ -280,6 +281,10 @@ Rules:
       }
 
       if (!mounted) return;
+      
+      // Record to activity tracker
+      context.read<ActivityTracker>().recordPush(repo.fullName, proposal.branchName);
+
       setState(() {
         _isPushing = false;
         proposal.status = ProposedChangeStatus.pushed;
